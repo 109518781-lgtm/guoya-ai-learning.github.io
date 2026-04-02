@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewfit=cover">
+    <title>赢未来国雅 · 新概念即学即练 | Lesson 59-60</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f4faf7;
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans', system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: #1a2c3e;
+            padding: 24px 20px 48px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .hero {
+            background: linear-gradient(135deg, #1a6b46, #2e8b5e);
+            border-radius: 28px;
+            padding: 24px 28px;
+            margin-bottom: 28px;
+            color: white;
+        }
+        .hero h1 { font-size: 1.7rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .hero p { margin-top: 8px; opacity: 0.92; font-size: 0.9rem; }
+        .summary-section { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px; }
+        .summary-card {
+            flex: 1; min-width: 260px; background: white; border-radius: 28px;
+            padding: 20px 24px; border: 1px solid #deede7;
+        }
+        .summary-card h3 {
+            font-size: 1.2rem; font-weight: 700; border-left: 5px solid #2e8b5e;
+            padding-left: 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+        }
+        .highlight { background: #fef7e0; padding: 12px 16px; border-radius: 20px; line-height: 1.5; font-size: 0.9rem; }
+        .tag {
+            display: inline-block; background: #e1f0ea; color: #1a6b46; border-radius: 40px;
+            padding: 4px 14px; font-size: 0.75rem; font-weight: 600; margin-right: 8px; margin-bottom: 8px;
+        }
+        .phrase-list { margin-top: 12px; }
+        .questions-container {
+            background: white; border-radius: 28px; padding: 24px;
+            border: 1px solid #deede7;
+        }
+        .questions-header {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #e2ece6;
+        }
+        .questions-header h2 { font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .question-item {
+            background: #fefefe; border-radius: 20px; padding: 18px;
+            margin-bottom: 18px; border: 1px solid #e8f0ec;
+        }
+        .question-text { font-weight: 600; margin-bottom: 14px; line-height: 1.45; font-size: 0.95rem; }
+        .hover-word {
+            border-bottom: 1px dashed #2e8b5e; cursor: help; position: relative; display: inline-block;
+        }
+        .tooltip-def {
+            display: none; position: absolute; background: #2c3e33; color: white;
+            padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; white-space: nowrap;
+            z-index: 200; bottom: 140%; left: 0; pointer-events: none;
+        }
+        .hover-word:hover .tooltip-def { display: block; }
+        @media (max-width: 640px) { .tooltip-def { white-space: normal; max-width: 160px; } }
+        .options { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 8px; }
+        .opt-btn {
+            background: #f2f6f4; border-radius: 40px; padding: 8px 20px;
+            border: 1px solid #cde0d8; cursor: pointer; font-size: 0.85rem;
+            transition: all 0.15s; user-select: none;
+        }
+        .opt-btn:hover:not(.disabled) { background: #e2ece6; }
+        .opt-btn.selected { background: #cde8de; border-color: #2e8b5e; color: #1a5a3c; font-weight: 500; }
+        .opt-btn.disabled { cursor: not-allowed; opacity: 0.7; }
+        .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 18px; font-size: 0.85rem; line-height: 1.4; }
+        .correct-fb { background: #dcfce7; color: #15803d; border-left: 4px solid #15803d; }
+        .wrong-fb { background: #ffe6e5; color: #b91c1c; border-left: 4px solid #b91c1c; }
+        .score-area {
+            background: #eaf3ef; border-radius: 28px; padding: 14px;
+            margin-top: 20px; text-align: center; font-weight: bold;
+        }
+        .download-section { text-align: center; margin-top: 32px; }
+        .download-btn {
+            background: #2e8b5e; color: white; border: none; padding: 12px 32px;
+            border-radius: 40px; cursor: pointer; font-size: 1rem; font-weight: 600;
+        }
+        .download-btn:hover { background: #1f6e46; transform: translateY(-2px); }
+        footer { text-align: center; margin-top: 32px; font-size: 0.7rem; color: #6c8b7c; }
+        .progress-stats { background: #eef3f0; border-radius: 20px; padding: 8px 16px; font-size: 0.85rem; }
+        @media (max-width: 700px) { body { padding: 16px; } .summary-card { padding: 16px; } .opt-btn { padding: 6px 14px; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1><i class="fas fa-leaf"></i> 赢未来国雅 · 新概念即学即练</h1>
+        <p>📖 新概念第1册 Lesson 59-60 | 购物、文具用品、交通方式 | 鼠标悬停查词 | 每道题选择后立即获得解析 | 答案不可修改</p>
+    </div>
+
+    <!-- 课文原文 + 词汇短语总结 -->
+    <div class="summary-section">
+        <div class="summary-card">
+            <h3><i class="fas fa-book-open"></i> 课文原文 · Lesson 59-60</h3>
+            <div class="highlight">
+                <strong>📖 Do you have any writing paper? (你有信纸吗？)</strong><br>
+                <em>Shop Assistant: Good morning. Can I help you?<br>
+                Lady: I want some envelopes, please.<br>
+                Shop Assistant: Do you want the large size or the small size?<br>
+                Lady: The large size, please.<br>
+                Lady: Do you have any writing paper?<br>
+                Shop Assistant: Yes, we do.<br>
+                Lady: I want a pad of writing paper.<br>
+                Shop Assistant: Is that all?<br>
+                Lady: No, I want some glue and a box of chalk, too.<br>
+                Shop Assistant: Here you are.<br>
+                Lady: That's all, thank you.</em><br><br>
+                🔑 <strong>语法聚焦</strong>：some/any用法 / 可数不可数名词 / 交通方式介词(by/on) / 现在进行时
+            </div>
+        </div>
+        <div class="summary-card">
+            <h3><i class="fas fa-list-ul"></i> 词汇 & 短语总结</h3>
+            <div class="highlight">
+                <strong>📌 核心词汇（含第二大题）</strong><br>
+                <span class="tag hover-word">envelope<span class="tooltip-def">信封</span></span>
+                <span class="tag hover-word">pad<span class="tooltip-def">信笺簿</span></span>
+                <span class="tag hover-word">assistant<span class="tooltip-def">助手</span></span>
+                <span class="tag hover-word">size<span class="tooltip-def">尺寸</span></span>
+                <span class="tag hover-word">chalk<span class="tooltip-def">粉笔</span></span>
+                <span class="tag hover-word">change<span class="tooltip-def">零钱</span></span>
+                <span class="tag hover-word">glue<span class="tooltip-def">胶水</span></span>
+                <span class="tag hover-word">writing paper<span class="tooltip-def">信纸</span></span>
+                <div class="phrase-list">
+                    <strong>🔗 高频短语</strong><br>
+                    • on foot 步行 &nbsp; • by bike/bus/plane/sea 乘自行车/公交/飞机/海路<br>
+                    • a box of chalk 一盒粉笔 &nbsp; • a bottle of glue 一瓶胶水<br>
+                    • a piece of paper 一张纸 &nbsp; • Is that all? 就这些吗？<br>
+                    • some/any 的用法 &nbsp; • What size? 什么尺寸？
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 所有题目区域 -->
+    <div class="questions-container">
+        <div class="questions-header">
+            <h2><i class="fas fa-puzzle-piece"></i> 在线练习 · 智能闯关</h2>
+            <div class="progress-stats" id="progressStats">已完成: 0 / 70</div>
+        </div>
+        <div id="questionsList"></div>
+        <div id="scoreArea" class="score-area" style="display: none;"></div>
+    </div>
+
+    <div class="download-section">
+        <button id="downloadBtn" class="download-btn"><i class="fas fa-download"></i> 下载学习报告</button>
+    </div>
+    <footer>✨ 鼠标悬停蓝色虚线单词查看释义 | 点击选项后立即锁定答案 | 每道题都有精确到选项的解析</footer>
+</div>
+
+<script>
+    // ======================= 基于 Lesson 59-60 试卷的完整题库 =======================
+    const questions = [
+        // === 第一大题：单词辨音 (1-10) ===
+        { id: 1, stem: "单词辨音：选出划线部分读音不同的单词 (a) change (b) pad (c) make (d) Australia", options: ["change", "pad", "make", "Australia"], correct: "pad", explanation: "pad中a发/æ/，其他发/eɪ/或/ɑː/。", point: "语音辨析" },
+        { id: 2, stem: "单词辨音：选出划线部分读音不同的单词 (a) blue (b) glue (c) August (d) June", options: ["blue", "glue", "August", "June"], correct: "August", explanation: "August中Au发/ɔː/，其他发/uː/。", point: "语音辨析" },
+        { id: 3, stem: "单词辨音：选出划线部分读音不同的单词 (a) chalk (b) walk (c) always (d) talk", options: ["chalk", "walk", "always", "talk"], correct: "always", explanation: "always中al发/ɔːl/，其他发/ɔː/。", point: "语音辨析" },
+        { id: 4, stem: "单词辨音：选出划线部分读音不同的单词 (a) change (b) July (c) June (d) give", options: ["change", "July", "June", "give"], correct: "give", explanation: "give中g发/g/，其他发/dʒ/。", point: "语音辨析" },
+        { id: 5, stem: "单词辨音：选出划线部分读音不同的单词 (a) July (b) January (c) February (d) usually", options: ["July", "January", "February", "usually"], correct: "July", explanation: "July中J发/dʒ/，但重音不同，u发音也不同。", point: "语音辨析" },
+        { id: 6, stem: "单词辨音：选出划线部分读音不同的单词 (a) south (b) house (c) how (d) snow", options: ["south", "house", "how", "snow"], correct: "snow", explanation: "snow中ow发/əʊ/，其他发/aʊ/。", point: "语音辨析" },
+        { id: 7, stem: "单词辨音：选出划线部分读音不同的单词 (a) early (b) weather (c) heavy (d) bread", options: ["early", "weather", "heavy", "bread"], correct: "early", explanation: "early中ear发/ɜː/，其他发/e/。", point: "语音辨析" },
+        { id: 8, stem: "单词辨音：选出划线部分读音不同的单词 (a) England (b) France (c) German (d) Spain", options: ["England", "France", "German", "Spain"], correct: "Spain", explanation: "Spain中ai发/eɪ/，其他发/æ/或/ə/。", point: "语音辨析" },
+        { id: 9, stem: "单词辨音：选出划线部分读音不同的单词 (a) August (b) Norway (c) Holland (d) autumn", options: ["August", "Norway", "Holland", "autumn"], correct: "Holland", explanation: "Holland中o发/ɒ/，其他发/ɔː/。", point: "语音辨析" },
+        { id: 10, stem: "单词辨音：选出划线部分读音不同的单词 (a) Greece (b) country (c) climate (d) October", options: ["Greece", "country", "climate", "October"], correct: "country", explanation: "country中ou发/ʌ/，其他发/iː/或/əʊ/。", point: "语音辨析" },
+        
+        // === 第二大题：单词拼写（原填空改为选择题）===
+        { id: 11, stem: "【拼写】_nv_l_p_ (信封n.)", options: ["envelope", "envelop", "invelope", "anvelope"], correct: "envelope", explanation: "envelope 信封。注意拼写。", point: "词汇拼写" },
+        { id: 12, stem: "【拼写】p_d (信笺簿n.)", options: ["pad", "ped", "pud", "pod"], correct: "pad", explanation: "pad 信笺簿、便签本。", point: "词汇拼写" },
+        { id: 13, stem: "【拼写】ss_st_nt (助手n.)", options: ["assistant", "asistant", "assistent", "assistand"], correct: "assistant", explanation: "assistant 助手，店员。", point: "词汇拼写" },
+        { id: 14, stem: "【拼写】s_z_ (尺寸n.)", options: ["size", "sise", "saze", "siza"], correct: "size", explanation: "size 尺寸、大小。", point: "词汇拼写" },
+        { id: 15, stem: "【拼写】ch_k (粉笔n.)", options: ["chalk", "chock", "chek", "chak"], correct: "chalk", explanation: "chalk 粉笔。", point: "词汇拼写" },
+        { id: 16, stem: "【拼写】ch_ge (零钱n.)", options: ["change", "chage", "chenge", "chunge"], correct: "change", explanation: "change 零钱、变化。", point: "词汇拼写" },
+        { id: 17, stem: "【拼写】gl_ (胶水n.)", options: ["glue", "glu", "glew", "gluw"], correct: "glue", explanation: "glue 胶水。", point: "词汇拼写" },
+        { id: 18, stem: "【拼写】w_t_g_p_ (信纸n.)", options: ["writing paper", "writingpaper", "write paper", "writting paper"], correct: "writing paper", explanation: "writing paper 信纸。", point: "词汇拼写" },
+        { id: 19, stem: "【拼写】_ls_ (其他pron.)", options: ["else", "else", "elese", "else"], correct: "else", explanation: "else 其他的，常用于疑问词后。", point: "词汇拼写" },
+        { id: 20, stem: "【拼写】_ll (所有pron.)", options: ["all", "oll", "al", "awl"], correct: "all", explanation: "all 所有的。", point: "词汇拼写" },
+        
+        // === 第三大题：语法词汇 (21-50) ===
+        { id: 21, stem: "He usually goes to work ______ foot.", options: ["on", "by", "with", "in"], correct: "on", explanation: "on foot 步行，固定搭配。", point: "交通方式" },
+        { id: 22, stem: "My father sometimes goes to work ______ bike.", options: ["by", "on", "in", "with"], correct: "by", explanation: "by bike 骑自行车，交通工具前用by。", point: "交通方式" },
+        { id: 23, stem: "It sometimes rains ______ April.", options: ["on", "in", "at", "of"], correct: "in", explanation: "月份前用介词in。", point: "时间介词" },
+        { id: 24, stem: "Mike goes to school ______ bus.", options: ["on", "in", "by", "with"], correct: "by", explanation: "by bus 乘公交车。", point: "交通方式" },
+        { id: 25, stem: "They go to Japan ______.", options: ["on a plane", "with a plane", "by a plane", "by air"], correct: "by air", explanation: "by air 乘飞机，by plane也可但不需要冠词。", point: "交通方式" },
+        { id: 26, stem: "He goes to China ______.", options: ["by a ship", "by sea", "by the ship", "by a sea"], correct: "by sea", explanation: "by sea 乘船，by ship也可。", point: "交通方式" },
+        { id: 27, stem: "It's always hot ______ summer.", options: ["on", "in", "of", "at"], correct: "in", explanation: "季节前用in。", point: "时间介词" },
+        { id: 28, stem: "What's the weather like ______ the North?", options: ["on", "at", "in", "of"], correct: "in", explanation: "在某个地区用in。", point: "地点介词" },
+        { id: 29, stem: "Mrs Smith ______ going to see a friend tonight.", options: ["am", "is", "be", "are"], correct: "is", explanation: "Mrs Smith是第三人称单数，用is。", point: "主谓一致" },
+        { id: 30, stem: "Mr Smith ______ walking with his wife in the park.", options: ["am", "is", "be", "are"], correct: "is", explanation: "Mr Smith第三人称单数，用is。", point: "主谓一致" },
+        { id: 31, stem: "The Smiths ______ going to travel in October.", options: ["are", "is", "am", "be"], correct: "are", explanation: "The Smiths指史密斯一家人，复数用are。", point: "主谓一致" },
+        { id: 32, stem: "My friend and I ______ going to travel this year.", options: ["am", "is", "be", "are"], correct: "are", explanation: "my friend and I是复数主语。", point: "主谓一致" },
+        { id: 33, stem: "\"That's OK, thank you.\" 问句应该是？", options: ["Is it all", "Is that all", "Are they all", "Are those all"], correct: "Is that all", explanation: "Is that all? 就这些吗？常用购物用语。", point: "情景交际" },
+        { id: 34, stem: "What do you want ______?", options: ["else", "some others", "some one", "some ones"], correct: "else", explanation: "What else? 还有什么？else放在疑问词后。", point: "不定代词" },
+        { id: 35, stem: "Do you want ______?", options: ["pad", "any pad", "a pad", "some pads"], correct: "a pad", explanation: "pad可数名词单数，用a pad。", point: "冠词" },
+        { id: 36, stem: "I want some ______.", options: ["glues", "glue", "chalks", "pad"], correct: "glue", explanation: "glue不可数名词，不加s。", point: "不可数名词" },
+        { id: 37, stem: "I want a ______ of chalk.", options: ["box", "bottle", "piece", "bar"], correct: "box", explanation: "a box of chalk 一盒粉笔。", point: "量词" },
+        { id: 38, stem: "I want a ______ of glue.", options: ["box", "bottle", "piece", "bar"], correct: "bottle", explanation: "a bottle of glue 一瓶胶水。", point: "量词" },
+        { id: 39, stem: "I want a ______ of writing paper.", options: ["cup", "bottle", "piece", "bar"], correct: "piece", explanation: "a piece of writing paper 一张信纸。", point: "量词" },
+        { id: 40, stem: "I want ______.", options: ["changes", "a change", "change", "some changes"], correct: "change", explanation: "change作为零钱不可数。", point: "不可数名词" },
+        { id: 41, stem: "I want ______.", options: ["some envelope", "envelope", "a envelope", "an envelope"], correct: "an envelope", explanation: "envelope以元音音素开头，用an。", point: "冠词" },
+        { id: 42, stem: "I only have large ______.", options: ["one", "some one", "any", "ones"], correct: "ones", explanation: "ones代替前面提到的复数名词。", point: "代词" },
+        { id: 43, stem: "I ______ large ones.", options: ["only has", "only have", "have only", "has only"], correct: "only have", explanation: "主语I，动词用have，only放在have前。", point: "副词位置" },
+        { id: 44, stem: "______ size do you want?", options: ["Which", "Whose", "What", "Where"], correct: "What", explanation: "What size? 什么尺寸？", point: "疑问词" },
+        { id: 45, stem: "Do you want the large size ______ the small size?", options: ["and", "but", "/", "or"], correct: "or", explanation: "选择疑问句用or连接。", point: "连词" },
+        { id: 46, stem: "\"Do you have ______ tomatoes?\" \"Yes, I have ______.\"", options: ["some...some", "any...any", "some...any", "any...some"], correct: "any...some", explanation: "疑问句用any，肯定回答用some。", point: "some/any用法" },
+        { id: 47, stem: "\"Do you have ______ glue?\" \"No, I don't have ______.\"", options: ["some...some", "any...any", "some...any", "any...some"], correct: "any...any", explanation: "疑问句和否定句都用any。", point: "some/any用法" },
+        { id: 48, stem: "Do you have any ______?", options: ["peach", "peaches", "peachs", "peach - es"], correct: "peaches", explanation: "peach复数加es，peaches。", point: "名词复数" },
+        { id: 49, stem: "Do you have any ______?", options: ["tomato", "tomatos", "tomatoes", "tomato - es"], correct: "tomatoes", explanation: "tomato复数加es，tomatoes。", point: "名词复数" },
+        
+        // === 第四大题：翻译句子 (50-59) ===
+        { id: 50, stem: "【翻译】我要一大盒粉笔。", options: ["I want a large box of chalk.", "I want a big box chalks.", "I want large box chalk.", "I want a box large chalk."], correct: "I want a large box of chalk.", explanation: "a large box of chalk 一盒粉笔，chalk不可数。", point: "翻译" },
+        { id: 51, stem: "【翻译】你有信纸吗？", options: ["Do you have any writing paper?", "Do you have writing papers?", "Have you writing paper?", "Do you have any write paper?"], correct: "Do you have any writing paper?", explanation: "writing paper不可数，疑问句用any。", point: "翻译" },
+        { id: 52, stem: "【翻译】我要一本。", options: ["I want one.", "I want a.", "I want it.", "I want this."], correct: "I want one.", explanation: "one代替前面提到的可数名词。", point: "代词" },
+        { id: 53, stem: "【翻译】你还要什么？", options: ["What else do you want?", "What do you want else?", "Else what do you want?", "What you want else?"], correct: "What else do you want?", explanation: "else放在疑问词后。", point: "翻译" },
+        { id: 54, stem: "【翻译】我要我的零钱。", options: ["I want my change.", "I want my changes.", "I want me change.", "I want change my."], correct: "I want my change.", explanation: "change零钱不可数。", point: "翻译" },
+        { id: 55, stem: "【翻译】Do you want the large size or the small size?", options: ["你想要大号还是小号？", "你喜欢大号还是小号？", "你要大尺寸和小尺寸吗？", "你要大号或者小号吗？"], correct: "你想要大号还是小号？", explanation: "选择疑问句的翻译。", point: "翻译" },
+        { id: 56, stem: "【翻译】I want a large box of chalk.", options: ["我想要一大盒粉笔。", "我想要一个大粉笔盒。", "我想要一大盒粉笔。", "我要大盒粉笔。"], correct: "我想要一大盒粉笔。", explanation: "a large box of chalk 一盒粉笔。", point: "翻译" },
+        { id: 57, stem: "【翻译】Is that all?", options: ["就这些吗？", "那是全部吗？", "那是什么？", "那是所有吗？"], correct: "就这些吗？", explanation: "购物常用语，就这些吗？", point: "翻译" },
+        { id: 58, stem: "【翻译】That's all, thank you.", options: ["就这些了，谢谢。", "那是全部，谢谢。", "就这样吧，谢谢。", "全部了，谢谢。"], correct: "就这些了，谢谢。", explanation: "购物结束用语。", point: "翻译" },
+        { id: 59, stem: "【翻译】I want a bottle of glue.", options: ["我想要一瓶胶水。", "我要一个胶水瓶。", "我想要胶水瓶子。", "我要一瓶胶水。"], correct: "我想要一瓶胶水。", explanation: "a bottle of glue 一瓶胶水。", point: "翻译" },
+        
+        // === 第五大题：句型转换 (肯定变疑问) 60-64 ===
+        { id: 60, stem: "【句型转换】Mr White usually reads newspapers. 变为一般疑问句", options: ["Does Mr White usually read newspapers?", "Do Mr White usually read newspapers?", "Is Mr White usually read newspapers?", "Does Mr White usually reads newspapers?"], correct: "Does Mr White usually read newspapers?", explanation: "主语三单，用Does助动词，动词恢复原形。", point: "句型转换" },
+        { id: 61, stem: "【句型转换】My father is shaving in the bathroom. 变为一般疑问句", options: ["Is my father shaving in the bathroom?", "Does my father shaving in the bathroom?", "Is my father shave in the bathroom?", "Do my father shaving?"], correct: "Is my father shaving in the bathroom?", explanation: "现在进行时，将is提到主语前。", point: "句型转换" },
+        { id: 62, stem: "【句型转换】He never does any homework. 变为一般疑问句", options: ["Does he ever do any homework?", "Does he never do any homework?", "Do he never do homework?", "Is he never do homework?"], correct: "Does he ever do any homework?", explanation: "never改为ever，用Does。", point: "句型转换" },
+        { id: 63, stem: "【句型转换】I want some bananas. 变为一般疑问句", options: ["Do you want any bananas?", "Do I want any bananas?", "Do you want some bananas?", "Are you want any bananas?"], correct: "Do you want any bananas?", explanation: "第一人称I改为you，some变为any。", point: "句型转换" },
+        { id: 64, stem: "【句型转换】My brother has a blue car. 变为一般疑问句", options: ["Does my brother have a blue car?", "Does my brother has a blue car?", "Do my brother have a blue car?", "Is my brother have a blue car?"], correct: "Does my brother have a blue car?", explanation: "has是have的三单，用Does后恢复原形have。", point: "句型转换" },
+        
+        // === 第六大题：介词填空 (65-70) ===
+        { id: 65, stem: "She's waiting ______ her change.", options: ["for", "on", "at", "in"], correct: "for", explanation: "wait for 等待。", point: "介词搭配" },
+        { id: 66, stem: "She often washes dishes ______ supper and watches TV ______ night.", options: ["after...at", "before...in", "at...on", "for...at"], correct: "after...at", explanation: "after supper晚饭后，at night在夜晚。", point: "介词" },
+        { id: 67, stem: "The Greens are watching television ______ the moment in the living room.", options: ["at", "on", "in", "for"], correct: "at", explanation: "at the moment 此刻。", point: "介词短语" },
+        { id: 68, stem: "Wang Hai often goes to school ______ bike.", options: ["by", "on", "in", "with"], correct: "by", explanation: "by bike 骑自行车。", point: "交通介词" },
+        { id: 69, stem: "They usually have supper ______ six, but tonight they have supper ______ seven.", options: ["at...at", "on...on", "in...in", "at...on"], correct: "at...at", explanation: "具体时刻前用at。", point: "时间介词" },
+        { id: 70, stem: "They play games in the garden ______ the afternoon.", options: ["in", "on", "at", "of"], correct: "in", explanation: "in the afternoon 在下午。", point: "时间介词" }
+    ];
+    
+    // 生词库（悬停用）
+    const vocabMap = {
+        "envelope":"信封","pad":"信笺簿","assistant":"助手","size":"尺寸","chalk":"粉笔","change":"零钱","glue":"胶水",
+        "writing paper":"信纸","else":"其他的","all":"所有的","foot":"脚","bike":"自行车","bus":"公交车","plane":"飞机",
+        "summer":"夏天","spring":"春天","autumn":"秋天","winter":"冬天","chalk":"粉笔","glue":"胶水","paper":"纸",
+        "tomato":"番茄","peach":"桃子","breakfast":"早餐","lunch":"午餐","dinner":"晚餐"
+    };
+    
+    let userAnswers = {};
+    
+    function addHoverToText(text) {
+        if (!text) return text;
+        let newText = text;
+        Object.keys(vocabMap).forEach(word => {
+            const regex = new RegExp(`\\b${word}\\b`, 'gi');
+            if (regex.test(newText) && !newText.includes(`<span class="hover-word">${word}`)) {
+                newText = newText.replace(regex, match => `<span class="hover-word">${match}<span class="tooltip-def">${vocabMap[word]}</span></span>`);
+            }
+        });
+        return newText;
+    }
+    
+    function updateProgress() {
+        const answered = Object.keys(userAnswers).length;
+        document.getElementById("progressStats").innerHTML = `已完成: ${answered} / ${questions.length}`;
+        if (answered === questions.length) {
+            let correct = questions.filter(q => userAnswers[q.id] === q.correct).length;
+            let percent = Math.round((correct / questions.length) * 100);
+            document.getElementById("scoreArea").style.display = "block";
+            document.getElementById("scoreArea").innerHTML = `<i class="fas fa-trophy"></i> 恭喜！已完成全部 ${questions.length} 道题！正确率: ${correct}/${questions.length} (${percent}%) ${percent>=70 ? '🎉 表现优秀！' : '📚 继续加油！'}`;
+        }
+    }
+    
+    function showFeedback(q, userAnswer, isCorrect) {
+        const fbDiv = document.getElementById(`fb-${q.id}`);
+        const detailDiv = document.getElementById(`detail-${q.id}`);
+        let analysis = `<strong>🎯 考点：${q.point}</strong><br/>📖 ${q.explanation}<br/><strong>🔍 选项分析：</strong><br/>`;
+        q.options.forEach(opt => {
+            let mark = opt === q.correct ? '✅ 正确答案' : '❌ 干扰项';
+            let userMark = userAnswer === opt ? ' (你的选择)' : '';
+            analysis += `• ${opt} ：${mark}${userMark}<br/>`;
+        });
+        if (isCorrect) {
+            fbDiv.innerHTML = `<div class="correct-fb">✅ 正确！</div>`;
+            analysis += `<span style="color:#2b7a4b;">✔ 很棒！</span>`;
+        } else {
+            fbDiv.innerHTML = `<div class="wrong-fb">❌ 错误。正确答案是“${q.correct}”。${q.explanation}</div>`;
+            analysis += `<span style="color:#b91c1c;">⚠️ 你的答案：${userAnswer}，错误。</span>`;
+        }
+        detailDiv.style.display = "block";
+        detailDiv.innerHTML = analysis;
+    }
+    
+    function renderQuestions() {
+        let html = '';
+        questions.forEach((q, idx) => {
+            let stem = addHoverToText(q.stem);
+            let optsHtml = '';
+            q.options.forEach(opt => {
+                let optDisplay = addHoverToText(opt);
+                let isSelected = userAnswers[q.id] === opt;
+                let disabled = userAnswers[q.id] ? 'disabled' : '';
+                optsHtml += `<div class="opt-btn ${isSelected ? 'selected' : ''} ${disabled}" data-qid="${q.id}" data-val="${opt}">${optDisplay}</div>`;
+            });
+            html += `
+                <div class="question-item">
+                    <div class="question-text">${idx+1}. ${stem}</div>
+                    <div class="options" id="opts-${q.id}">${optsHtml}</div>
+                    <div class="feedback" id="fb-${q.id}"></div>
+                    <div class="detail-exp" id="detail-${q.id}" style="display:none; background:#f4f9fc; border-radius:16px; padding:10px; margin-top:10px;"></div>
+                </div>
+            `;
+        });
+        document.getElementById("questionsList").innerHTML = html;
+        
+        document.querySelectorAll('.opt-btn:not(.disabled)').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const qid = parseInt(this.getAttribute('data-qid'));
+                if (userAnswers[qid]) return;
+                const val = this.getAttribute('data-val');
+                const q = questions.find(qq => qq.id === qid);
+                userAnswers[qid] = val;
+                const isCorrect = val === q.correct;
+                const parentDiv = this.closest('.question-item');
+                parentDiv.querySelectorAll('.opt-btn').forEach(opt => opt.classList.add('disabled'));
+                this.classList.add('selected');
+                showFeedback(q, val, isCorrect);
+                updateProgress();
+            });
+        });
+        
+        questions.forEach(q => {
+            if (userAnswers[q.id]) {
+                showFeedback(q, userAnswers[q.id], userAnswers[q.id] === q.correct);
+            }
+        });
+    }
+    
+    function downloadReport() {
+        let correct = questions.filter(q => userAnswers[q.id] === q.correct).length;
+        let percent = Math.round((correct / questions.length) * 100);
+        let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>新概念Lesson59-60学习报告</title><style>body{font-family:sans-serif;padding:20px;max-width:800px;margin:0 auto;}.correct{color:green;}.wrong{color:red;}li{margin-bottom:12px;}</style></head><body>`;
+        html += `<h1>📚 赢未来国雅 · 新概念学习报告</h1>`;
+        html += `<p>Lesson 59-60 购物与文具 | 生成时间: ${new Date().toLocaleString()}</p>`;
+        html += `<h2>📊 学习统计</h2><p>总题数: ${questions.length} | 正确数: ${correct} | 正确率: ${percent}%</p>`;
+        html += `<h2>📖 课文摘要</h2><p>购物场景，重点some/any用法、可数不可数名词、交通方式介词(on foot/by bike等)。</p>`;
+        html += `<h2>📚 核心词汇短语</h2><p>envelope, pad, assistant, size, chalk, change, glue, writing paper；短语：on foot, by bike, a box of chalk, a bottle of glue, a piece of paper</p>`;
+        html += `<h2>📝 答题详情</h2><ul>`;
+        questions.forEach(q => {
+            let user = userAnswers[q.id] || '未作答';
+            let isCorrect = user === q.correct;
+            html += `<li class="${isCorrect ? 'correct' : 'wrong'}"><strong>${q.id}. ${q.stem}</strong><br/>你的答案: ${user} ${isCorrect ? '✓' : '✗'} | 正确答案: ${q.correct}<br/>解析: ${q.explanation}</li>`;
+        });
+        html += `</ul><p>坚持练习，巩固知识点！</p></body></html>`;
+        const blob = new Blob([html], { type: "text/html" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "NCE_Lesson59_60_Report.html";
+        link.click();
+    }
+    
+    renderQuestions();
+    updateProgress();
+    document.getElementById("downloadBtn").addEventListener("click", downloadReport);
+</script>
+</body>
+</html>
