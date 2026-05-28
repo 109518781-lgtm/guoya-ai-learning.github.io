@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>赢未来国雅 · 英语练习考点精析 | 奥运冠军的蜕变之路（2023全国乙卷）</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f5fbf7;
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            padding: 24px 18px;
+            color: #1e2f2a;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        .hero { text-align: center; margin-bottom: 32px; }
+        .hero h1 { font-size: 1.9rem; background: linear-gradient(135deg, #216e48, #368f5c); background-clip: text; -webkit-background-clip: text; color: transparent; letter-spacing: -0.3px; }
+        .hero p { color: #517a66; font-size: 0.9rem; border-bottom: 2px solid #cde2d6; display: inline-block; padding-bottom: 8px; }
+        .meta-info { display: flex; justify-content: space-between; flex-wrap: wrap; margin-top: 8px; font-size: 0.8rem; color: #5e7a6b; }
+        .card { background: white; border-radius: 32px; box-shadow: 0 10px 24px rgba(0, 32, 0, 0.05); margin-bottom: 28px; overflow: hidden; }
+        .question-panel { padding: 24px 22px 12px 22px; }
+        .cloze-passage {
+            background: #fefaf0; padding: 18px 20px; border-radius: 28px; line-height: 1.75; font-size: 0.96rem;
+            margin-bottom: 24px; border: 1px solid #e9e0cb; white-space: pre-line;
+        }
+        .question-text {
+            font-size: 1rem; font-weight: 550; background: #f9fff9; padding: 10px 16px; border-radius: 24px;
+            border-left: 6px solid #3b9b6e; margin-bottom: 20px; line-height: 1.45; color: #1f3b31;
+        }
+        .options-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+        .option {
+            display: flex; align-items: flex-start; gap: 14px; padding: 10px 16px; background: #fefef8;
+            border: 1px solid #e1efe6; border-radius: 60px; cursor: pointer; transition: all 0.2s;
+        }
+        .option:hover:not(.disabled-opt) { background: #e9f3ec; border-color: #9ac2ab; }
+        .option-letter { font-weight: 800; background: #e3f0e9; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 40px; color: #2b6e4c; flex-shrink: 0; }
+        .option-text { font-size: 0.95rem; line-height: 1.4; color: #2a423a; }
+        .feedback-area { background: #f9fcf5; margin: 0 20px 20px 20px; border-radius: 24px; padding: 16px 20px; border: 1px solid #d9ebdf; }
+        .result-badge { display: inline-block; font-weight: 700; padding: 5px 16px; border-radius: 40px; font-size: 0.85rem; margin-bottom: 14px; }
+        .correct-badge { background: #cbefdf; color: #146b3a; }
+        .wrong-badge { background: #ffe1de; color: #bc4a3a; }
+        .answer-compare { background: #ffffffcc; padding: 10px 14px; border-radius: 20px; margin-top: 8px; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 18px; border-left: 4px solid #88b8a0; }
+        .detail-explanation { margin: 12px 0 0 0; padding: 12px 14px; background: #f3f8f1; border-radius: 20px; font-size: 0.88rem; line-height: 1.5; }
+        .lock-message { margin-top: 12px; font-size: 0.7rem; text-align: right; color: #89b69c; font-style: italic; }
+        .disabled-opt { opacity: 0.65; pointer-events: none; background: #f2f5ef; cursor: default; }
+        .analysis-special { background: #fefbed; border-radius: 32px; padding: 0px 0px 12px 0px; border: 1px solid #f0e2bc; margin: 20px 0; }
+        .analysis-title { font-weight: 800; font-size: 1rem; padding: 20px 24px 8px 24px; color: #b17f2e; background: #fff8e7; border-bottom: 1px dashed #efdfb2; }
+        .phrase-list, .sentence-list { padding: 8px 24px 20px 24px; }
+        .phrase-item, .sentence-item { margin-bottom: 18px; padding: 10px 14px; background: #fffcf0; border-radius: 24px; border-left: 4px solid #cfb87c; }
+        .phrase-text { font-weight: 700; color: #3c6e47; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+        .phrase-en { background: #e8f0e3; padding: 2px 10px; border-radius: 40px; }
+        .phrase-zh { color: #b45f1b; font-weight: 500; font-size: 0.85rem; }
+        .phrase-example { font-size: 0.85rem; color: #5c6e5a; margin-top: 8px; padding-left: 8px; border-left: 2px solid #dfcca2; }
+        .sentence-grammar { background: #fef7e6; padding: 10px 14px; border-radius: 20px; margin-top: 10px; font-size: 0.85rem; }
+        .sentence-en { font-weight: 600; color: #2f6042; }
+        .sentence-zh { color: #a5651e; margin-top: 6px; font-size: 0.85rem; }
+        .clickable-word { border-bottom: 1px dashed #6f9a82; cursor: pointer; font-weight: 500; display: inline-block; }
+        .clickable-word:active { background: #d9f0e4; border-radius: 8px; }
+        .word-toast { position: fixed; bottom: 25%; left: 50%; transform: translateX(-50%) translateY(20px); background: #fffffff2; backdrop-filter: blur(8px); color: #2c5a44; padding: 12px 24px; border-radius: 50px; font-size: 1rem; font-weight: 600; z-index: 1000; max-width: 85vw; white-space: normal; text-align: center; box-shadow: 0 8px 24px rgba(0, 32, 0, 0.15), 0 0 0 1px rgba(100, 150, 120, 0.3); pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; opacity: 0; border: 1px solid #bdd8ca; }
+        .word-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .method-card { background: #eef3f0; border-radius: 28px; padding: 18px 22px; margin: 20px 0; }
+        .badge-method { background: #d9e6de; display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: bold; color: #2f6b48; }
+        .vocab-table, .sentence-table { width: 100%; border-collapse: collapse; background: #ffffffdd; border-radius: 24px; overflow: hidden; margin-top: 12px; }
+        .vocab-table th, .vocab-table td, .sentence-table th, .sentence-table td { border: 1px solid #dbeadf; padding: 10px 12px; vertical-align: top; font-size: 0.85rem; }
+        .vocab-table th, .sentence-table th { background: #e2f0e8; font-weight: 600; color: #245f41; }
+        .section-title-icon { margin: 20px 0 10px 0; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .editable-cell { background-color: #fffff2; }
+        @media (max-width: 640px) { body { padding: 16px 12px; } .question-panel { padding: 18px 16px 6px 16px; } .feedback-area { margin: 0 12px 16px 12px; } .phrase-list, .sentence-list { padding: 8px 16px 16px 16px; } }
+        footer { text-align: center; font-size: 0.7rem; color: #86a694; margin: 32px 0 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>✨ 赢未来国雅 · 英语练习考点精析 ✨</h1>
+        <p>DAY8 Quiz 2 · 奥运冠军Gabby Douglas的梦想之路 | 2023全国乙卷</p>
+        <div class="meta-info">📌 来源：2023全国乙卷 · 难度较难 · 完整释义库</div>
+    </div>
+    <div id="questionsRoot"></div>
+    <footer>💡 点击选项立即锁定答案。<span style="background:#e8f0e3;padding:2px 10px;border-radius:20px;">🔍 点击任意英文单词 → 弹出中文释义</span>，下方表格可自填复习。</footer>
+</div>
+<div id="wordToast" class="word-toast"></div>
+
+<script>
+    // ========== 完整释义库（覆盖初中以上所有词汇）==========
+    const meaningMap = {
+        // 人物/专有名词
+        "Gabby Douglas": "盖比·道格拉斯（美国体操运动员）", "Olympic champion": "奥运冠军", "Virginia": "弗吉尼亚州",
+        "Martha Karoly": "玛莎·卡罗利（美国女子体操队协调员）", "London Games": "伦敦奥运会",
+        // 动词/动作
+        "leave": "离开", "pack up": "打包", "say goodbye": "告别", "ride waves": "冲浪", "take the leap": "迈出这一步",
+        "dropped out": "退出", "moved on": "继续前进", "pulled over": "靠边停车", "went off": "离开", "train": "训练",
+        "compete": "竞争", "defeated": "击败", "transformed": "转变/改造", "forced": "强迫", "persuaded": "说服",
+        "clarifying": "澄清", "defending": "保卫", "winning": "赢得", "demanding": "要求", "followed": "跟随",
+        "organized": "组织", "watched": "观看", "led": "领导/领先", "shine": "闪耀", "inspire": "激励",
+        // 名词
+        "bedroom": "卧室", "dogs": "狗", "beach": "海滩", "board": "冲浪板", "leap": "跳跃", "coach": "教练",
+        "gymnast": "体操运动员", "title": "头衔/冠军", "competition": "比赛", "coordinator": "协调员",
+        "all-around": "全能", "individual": "个人", "amateur": "业余选手", "average": "普通的", "enthusiastic": "热情的",
+        // 形容词/副词
+        "breathtaking": "惊人的", "heartbreaking": "令人心碎的", "eye-catching": "引人注目的", "head-spinning": "令人头晕目眩的",
+        "approximately": "大约", "gradually": "逐渐地", "exactly": "确切地", "possibly": "可能地", "confident": "自信的",
+        "nervous": "紧张的", "excited": "兴奋的", "uneasy": "不安的", "now and then": "偶尔", "more and more": "越来越",
+        "far and wide": "广泛地", "on and on": "不停地", "tough": "艰难的", "common": "普通的", "grand": "宏伟的",
+        // 短语
+        "as it turned out": "事实证明", "from beginning to end": "自始至终", "all along": "一直", "skyrocket": "飞速上升"
+    };
+    
+    function lookupMeaning(word) {
+        if (meaningMap[word]) return meaningMap[word];
+        var lower = word.toLowerCase();
+        if (meaningMap[lower]) return meaningMap[lower];
+        var withoutS = lower.replace(/s$/, '');
+        if (meaningMap[withoutS]) return meaningMap[withoutS];
+        var withoutEd = lower.replace(/ed$/, '');
+        if (meaningMap[withoutEd]) return meaningMap[withoutEd];
+        var withoutIng = lower.replace(/ing$/, '');
+        if (meaningMap[withoutIng]) return meaningMap[withoutIng];
+        return null;
+    }
+    
+    function showWordMeaning(word) {
+        var meaning = lookupMeaning(word);
+        if (!meaning) meaning = "✨ 可自行补充笔记";
+        var toast = document.getElementById("wordToast");
+        toast.innerText = word + "  ·  " + meaning;
+        toast.classList.add("show");
+        setTimeout(function() { toast.classList.remove("show"); }, 1500);
+    }
+    
+    function makeWordsClickable(container) {
+        if (!container) return;
+        var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+            acceptNode: function(node) {
+                if (node.parentElement && (node.parentElement.classList && node.parentElement.classList.contains('clickable-word')) ||
+                    (node.parentElement && node.parentElement.closest && node.parentElement.closest('.option, .disabled-opt, .feedback-area, .result-badge, .answer-compare, .detail-explanation')))
+                    return NodeFilter.FILTER_REJECT;
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
+        var nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+        nodes.forEach(function(textNode) {
+            var text = textNode.nodeValue;
+            if (!text || !text.trim()) return;
+            var regex = /\b([A-Za-z][A-Za-z\-']{1,35})\b/g;
+            var last = 0, match;
+            var frag = document.createDocumentFragment();
+            while ((match = regex.exec(text)) !== null) {
+                if (match.index > last) frag.appendChild(document.createTextNode(text.substring(last, match.index)));
+                var word = match[1];
+                var span = document.createElement('span');
+                span.className = 'clickable-word';
+                span.innerText = word;
+                span.addEventListener('click', (function(w) { return function(e) { e.stopPropagation(); showWordMeaning(w); }; })(word));
+                frag.appendChild(span);
+                last = match.index + match[0].length;
+            }
+            if (last < text.length) frag.appendChild(document.createTextNode(text.substring(last)));
+            if (frag.childNodes.length) textNode.parentNode.replaceChild(frag, textNode);
+        });
+    }
+    
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
+    // ========== 完形填空文章 ==========
+    var passageContent = `To become the Olympic champion in the individual all-around event, Gabby Douglas had to leave everything she [41] best. She had to [42] her bedroom in Virginia. She had to say [43] to her two dogs and to the beach, where she loved to [44] waves on her board. But it was [45] to take the leap, however [46] it would be. Even at 14, Douglas knew that. So she [47] about 1,200 miles away from home, to [48] with a coach from China. She lived with a family she had never [49] and everything was new to her.
+
+As it turned out, Douglas did [50] what she needed to do to become Olympic champion when she [51] two Russians. The Chinese coach [52] Douglas into one of the best gymnasts in the [53], helping her skyrocket from an [54] member of the national team to the top of the sport. By [55] the Olympic all-around title, she became the first black woman to do so. She [56] the competition from beginning to end. She said she had felt [57] all along that she would win.
+
+Not so long ago, Martha Karoly, the coordinator of the women's national team, did not think Douglas had what it [58] to be an Olympian. As time went by, she thought [59] that she could make the London Games - and win.
+
+"I'm going to inspire so many people," she said. "I'm ready to [60]." And shine she did.`;
+
+    // ========== 完形填空题目 (41-60) ==========
+    var clozeQuestions = [
+        { id: 41, opts: ["A. tried", "B. thought", "C. judged", "D. knew"], correct: "D", exp: "离开她最熟悉的一切。knew best最了解。", note: "know best 最了解" },
+        { id: 42, opts: ["A. take up", "B. pack up", "C. clean up", "D. do up"], correct: "B", exp: "收拾打包卧室。pack up打包。", note: "pack up 收拾行李" },
+        { id: 43, opts: ["A. goodbye", "B. hello", "C. thanks", "D. no"], correct: "A", exp: "告别她的两只狗。say goodbye告别。", note: "say goodbye to 向...告别" },
+        { id: 44, opts: ["A. cause", "B. observe", "C. ride", "D. strike"], correct: "C", exp: "冲浪。ride waves冲浪。", note: "ride waves 冲浪" },
+        { id: 45, opts: ["A. common", "B. time", "C. fun", "D. tough"], correct: "B", exp: "是时候迈出这一步了。it was time to do sth。", note: "it's time to 是时候做某事" },
+        { id: 46, opts: ["A. breathtaking", "B. heartbreaking", "C. eye-catching", "D. head-spinning"], correct: "B", exp: "无论这有多么令人心碎。heartbreaking令人心碎的。", note: "heartbreaking 令人心碎的" },
+        { id: 47, opts: ["A. dropped out", "B. moved on", "C. pulled over", "D. went off"], correct: "D", exp: "离家1200英里。went off离开。", note: "go off 离开" },
+        { id: 48, opts: ["A. reason", "B. talk", "C. compete", "D. train"], correct: "D", exp: "与中国教练一起训练。train训练。", note: "train with 与...一起训练" },
+        { id: 49, opts: ["A. met", "B. helped", "C. understood", "D. needed"], correct: "A", exp: "从未见过的家庭。met见过。", note: "never met 从未见过" },
+        { id: 50, opts: ["A. approximately", "B. gradually", "C. exactly", "D. possibly"], correct: "C", exp: "确切地做了需要做的事。exactly确切地。", note: "exactly 准确地" },
+        { id: 51, opts: ["A. defeated", "B. pleased", "C. respected", "D. assisted"], correct: "A", exp: "击败了两名俄罗斯选手。defeated击败。", note: "defeat 击败" },
+        { id: 52, opts: ["A. forced", "B. transformed", "C. persuaded", "D. put"], correct: "B", exp: "中国教练将道格拉斯转变成了世界顶级体操运动员。", note: "transform into 转变成为" },
+        { id: 53, opts: ["A. world", "B. city", "C. team", "D. state"], correct: "A", exp: "世界上最好的体操运动员之一。in the world。", note: "in the world 在世界上" },
+        { id: 54, opts: ["A. amateur", "B. elected", "C. average", "D. enthusiastic"], correct: "A", exp: "从国家队的业余成员。amateur业余的。", note: "amateur 业余选手" },
+        { id: 55, opts: ["A. clarifying", "B. defending", "C. winning", "D. demanding"], correct: "C", exp: "通过赢得奥运全能冠军。winning赢得。", note: "winning the title 赢得冠军" },
+        { id: 56, opts: ["A. followed", "B. organized", "C. watched", "D. led"], correct: "D", exp: "她从始至终领先比赛。led领导/领先。", note: "lead the competition 领先比赛" },
+        { id: 57, opts: ["A. confident", "B. nervous", "C. excited", "D. uneasy"], correct: "A", exp: "她一直自信自己会赢。confident自信的。", note: "feel confident 感到自信" },
+        { id: 58, opts: ["A. viewed", "B. appeared", "C. mattered", "D. took"], correct: "D", exp: "拥有成为奥运选手所需的条件。what it takes所需条件。", note: "what it takes 所需条件" },
+        { id: 59, opts: ["A. now and then", "B. more and more", "C. far and wide", "D. on and on"], correct: "B", exp: "她越来越相信。more and more越来越。", note: "more and more 越来越" },
+        { id: 60, opts: ["A. shine", "B. fly", "C. dance", "D. score"], correct: "A", exp: "我准备好闪耀了。shine闪耀。", note: "shine 闪耀" }
+    ];
+
+    // ========== 高频短语 ==========
+    var phraseList = [
+        { phrase: "take the leap", meaning: "迈出关键一步", example: "It was time to take the leap." },
+        { phrase: "pack up", meaning: "打包收拾", example: "She had to pack up her bedroom." },
+        { phrase: "say goodbye to", meaning: "向...告别", example: "She had to say goodbye to her dogs." },
+        { phrase: "as it turned out", meaning: "事实证明", example: "As it turned out, she became champion." },
+        { phrase: "transform into", meaning: "转变为", example: "The coach transformed her into a top gymnast." },
+        { phrase: "from beginning to end", meaning: "自始至终", example: "She led the competition from beginning to end." },
+        { phrase: "all along", meaning: "一直", example: "She had felt confident all along." },
+        { phrase: "what it takes", meaning: "所需条件", example: "She had what it takes to be an Olympian." },
+        { phrase: "more and more", meaning: "越来越", example: "She thought more and more that she could win." }
+    ];
+
+    // ========== 长难句 ==========
+    var longSentences = [
+        { sentence: "To become the Olympic champion in the individual all-around event, Gabby Douglas had to leave everything she knew best.", trans: "为了成为个人全能项目的奥运冠军，盖比·道格拉斯不得不离开她最熟悉的一切。", analysis: "不定式短语To become...作目的状语，she knew best是省略that的定语从句修饰everything。" },
+        { sentence: "As it turned out, Douglas did exactly what she needed to do to become Olympic champion when she defeated two Russians.", trans: "事实证明，当道格拉斯击败两名俄罗斯选手时，她确切地做了成为奥运冠军需要做的事情。", analysis: "As it turned out固定短语；what引导宾语从句；when引导时间状语从句。" },
+        { sentence: "The Chinese coach transformed Douglas into one of the best gymnasts in the world, helping her skyrocket from an amateur member of the national team to the top of the sport.", trans: "中国教练将道格拉斯转变为世界顶级体操运动员之一，帮助她从国家队的业余成员飞速上升到这项运动的顶峰。", analysis: "现在分词短语helping...作结果状语；from...to...结构。" },
+        { sentence: "Not so long ago, Martha Karoly, the coordinator of the women's national team, did not think Douglas had what it took to be an Olympian.", trans: "不久前，美国女子体操队协调员玛莎·卡罗利还认为道格拉斯不具备成为奥运选手的条件。", analysis: "the coordinator of...作同位语；what it took作had的宾语。" }
+    ];
+
+    // ========== 解题策略 ==========
+    var strategyBlock = `
+        <div class="method-card">
+            <div class="badge-method">🎯 完形填空 · 解题策略思路</div>
+            <ul style="margin-left:20px; margin-top:12px; color:#375e4c; line-height:1.5;">
+                <li><strong>1. 上下文逻辑链：</strong> 为成为奥运冠军 → 离开熟悉的一切 → 离家训练 → 击败对手 → 取得成功。</li>
+                <li><strong>2. 固定搭配优先：</strong> pack up, say goodbye, ride waves, take the leap, transform into, what it takes。</li>
+                <li><strong>3. 情感色彩一致：</strong> heartbreaking (令人心碎的) 与离开家乡的艰难呼应。</li>
+                <li><strong>4. 复现与指代：</strong> confident 与 she would win 呼应；led the competition 与 champion 呼应。</li>
+                <li><strong>5. 主旨升华：</strong> 为了梦想勇于离开舒适区，最终闪耀。</li>
+            </ul>
+        </div>
+    `;
+
+    var root = document.getElementById("questionsRoot");
+    var html = '';
+
+    // 完形填空文章卡片
+    html += '<div class="card"><div class="question-panel"><div class="question-text">📖 完形填空 · Gabby Douglas的奥运冠军之路 (2023全国乙卷)</div><div class="cloze-passage" id="clozePassage">' + escapeHtml(passageContent) + '</div></div></div>';
+    
+    // 完形填空题目
+    for (var i = 0; i < clozeQuestions.length; i++) { var q = clozeQuestions[i];
+        html += '<div class="card" data-qid="clz_' + q.id + '" data-correct="' + q.correct + '" data-exp="' + escapeHtml(q.exp) + '" data-note="' + escapeHtml(q.note) + '"><div class="question-panel"><div class="question-text">' + q.id + '. </div><div class="options-list">';
+        for (var j = 0; j < q.opts.length; j++) { var opt = q.opts[j];
+            html += '<div class="option" data-val="' + opt[0] + '"><div class="option-letter">' + opt[0] + '</div><div class="option-text">' + escapeHtml(opt) + '</div></div>';
+        }
+        html += '</div></div><div class="feedback-area" style="display:none;"></div></div>';
+    }
+    
+    // 高频短语板块
+    html += '<div class="card"><div class="analysis-special"><div class="analysis-title">📚 高频搭配 & 核心短语 · 长难句精析</div><div class="phrase-list"><strong style="display:block; margin-bottom:14px;">🔖 常考短语 (含释义+例句)</strong>';
+    for (var i = 0; i < phraseList.length; i++) { var p = phraseList[i];
+        html += '<div class="phrase-item"><div class="phrase-text"><span class="phrase-en">' + escapeHtml(p.phrase) + '</span><span class="phrase-zh">' + escapeHtml(p.meaning) + '</span></div><div class="phrase-example">💬 ' + escapeHtml(p.example) + '</div></div>';
+    }
+    html += '</div><div class="sentence-list"><strong style="display:block; margin:20px 0 14px;">🧩 长难句 + 语法分析</strong>';
+    for (var i = 0; i < longSentences.length; i++) { var ls = longSentences[i];
+        html += '<div class="sentence-item"><div class="sentence-en">📖 ' + escapeHtml(ls.sentence) + '</div><div class="sentence-zh">📝 中文：' + escapeHtml(ls.trans) + '</div><div class="sentence-grammar">📌 语法解析：' + escapeHtml(ls.analysis) + '</div></div>';
+    }
+    html += '</div></div></div>';
+    
+    // 解题策略
+    html += strategyBlock;
+    
+    // 难词表（可编辑）
+    html += '<div class="card" style="padding:16px 22px 22px 22px;"><div class="section-title-icon">📘 我的难词表 · 自主复习</div><table class="vocab-table"><thead><tr><th>序号</th><th>单词</th><th>词性及释义</th><th>我的笔记</th></tr></thead><tbody id="vocabTbody">';
+    for (var i = 0; i < 10; i++) { html += '<tr><td>' + (i+1) + '</td><td contenteditable="true" class="editable-cell"></td><td contenteditable="true" class="editable-cell"></td><td contenteditable="true" class="editable-cell"></td></tr>'; }
+    html += '</tbody></table><div class="section-title-icon" style="margin-top:24px;">📜 长难句积累 · 语料库</div><table class="sentence-table"><thead><tr><th>序号</th><th>长难句</th><th>备注（翻译/结构分析）</th></tr></thead><tbody id="sentenceTbody">';
+    for (var i = 0; i < 5; i++) { html += '<tr><td>' + (i+1) + '</td><td contenteditable="true" class="editable-cell"></td><td contenteditable="true" class="editable-cell"></td></tr>'; }
+    html += '</tbody><td><div style="font-size:0.7rem; color:#8aa998; margin-top:12px;">✏️ 点击单元格即可填写，自由记录难词和长难句分析，方便复习。</div></div>';
+    
+    root.innerHTML = html;
+    
+    // 使可点击
+    var passageDiv = document.getElementById("clozePassage");
+    if (passageDiv) makeWordsClickable(passageDiv);
+    document.querySelectorAll(".question-text, .option-text, .phrase-item, .sentence-item, .method-card, .phrase-example, .sentence-en, .sentence-zh").forEach(function(el) { if (el) makeWordsClickable(el); });
+    
+    // 绑定选择题事件
+    document.querySelectorAll('.card[data-qid]').forEach(function(card) {
+        var correct = card.getAttribute('data-correct');
+        var exp = card.getAttribute('data-exp') || "根据上下文分析得出。";
+        var note = card.getAttribute('data-note') || "注意固定搭配与逻辑衔接。";
+        var optsDiv = card.querySelector('.options-list');
+        if (!optsDiv) return;
+        var opts = optsDiv.querySelectorAll('.option');
+        opts.forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                if (card.classList.contains('answered')) return;
+                var selected = opt.getAttribute('data-val');
+                var isCorrect = (selected === correct);
+                var fb = card.querySelector('.feedback-area');
+                if (!fb) return;
+                var yourFull = selected, correctFull = correct;
+                opts.forEach(function(o) { if(o.getAttribute('data-val') === selected) yourFull = o.querySelector('.option-text')?.innerText || selected; if(o.getAttribute('data-val') === correct) correctFull = o.querySelector('.option-text')?.innerText || correct; });
+                fb.innerHTML = '<div class="result-badge ' + (isCorrect ? 'correct-badge' : 'wrong-badge') + '">' + (isCorrect ? '✔ 回答正确' : '❌ 回答错误') + '</div><div class="answer-compare"><div class="your-answer">📌 你的答案：' + selected + '. ' + escapeHtml(yourFull) + '</div><div class="correct-answer">✅ 正确答案：' + correct + '. ' + escapeHtml(correctFull) + '</div></div><div class="detail-explanation"><strong>🔎 详细解析：</strong> ' + escapeHtml(exp) + '<br/><strong>📘 考点笔记：</strong> ' + escapeHtml(note) + '</div><div class="lock-message">🔒 答案已锁定，不可修改</div>';
+                fb.style.display = 'block';
+                card.classList.add('answered');
+                opts.forEach(function(o) { o.classList.add('disabled-opt'); });
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>赢未来国雅 · 英语练习考点精析 | 自我接纳与成长（2022天津卷）</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f5fbf7;
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            padding: 24px 18px;
+            color: #1e2f2a;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        .hero { text-align: center; margin-bottom: 32px; }
+        .hero h1 { font-size: 1.9rem; background: linear-gradient(135deg, #216e48, #368f5c); background-clip: text; -webkit-background-clip: text; color: transparent; letter-spacing: -0.3px; }
+        .hero p { color: #517a66; font-size: 0.9rem; border-bottom: 2px solid #cde2d6; display: inline-block; padding-bottom: 8px; }
+        .meta-info { display: flex; justify-content: space-between; flex-wrap: wrap; margin-top: 8px; font-size: 0.8rem; color: #5e7a6b; }
+        .card { background: white; border-radius: 32px; box-shadow: 0 10px 24px rgba(0, 32, 0, 0.05); margin-bottom: 28px; overflow: hidden; }
+        .question-panel { padding: 24px 22px 12px 22px; }
+        .reading-passage {
+            background: #fefaf0; padding: 18px 20px; border-radius: 28px; line-height: 1.68; font-size: 0.96rem;
+            margin-bottom: 24px; border: 1px solid #e9e0cb; white-space: pre-line;
+        }
+        .question-text {
+            font-size: 1rem; font-weight: 550; background: #f9fff9; padding: 10px 16px; border-radius: 24px;
+            border-left: 6px solid #3b9b6e; margin-bottom: 20px; line-height: 1.45; color: #1f3b31;
+        }
+        .options-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+        .option {
+            display: flex; align-items: flex-start; gap: 14px; padding: 10px 16px; background: #fefef8;
+            border: 1px solid #e1efe6; border-radius: 60px; cursor: pointer; transition: all 0.2s;
+        }
+        .option:hover:not(.disabled-opt) { background: #e9f3ec; border-color: #9ac2ab; }
+        .option-letter { font-weight: 800; background: #e3f0e9; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 40px; color: #2b6e4c; flex-shrink: 0; }
+        .option-text { font-size: 0.95rem; line-height: 1.4; color: #2a423a; }
+        .feedback-area { background: #f9fcf5; margin: 0 20px 20px 20px; border-radius: 24px; padding: 16px 20px; border: 1px solid #d9ebdf; }
+        .result-badge { display: inline-block; font-weight: 700; padding: 5px 16px; border-radius: 40px; font-size: 0.85rem; margin-bottom: 14px; }
+        .correct-badge { background: #cbefdf; color: #146b3a; }
+        .wrong-badge { background: #ffe1de; color: #bc4a3a; }
+        .answer-compare { background: #ffffffcc; padding: 10px 14px; border-radius: 20px; margin-top: 8px; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 18px; border-left: 4px solid #88b8a0; }
+        .detail-explanation { margin: 12px 0 0 0; padding: 12px 14px; background: #f3f8f1; border-radius: 20px; font-size: 0.88rem; line-height: 1.5; }
+        .lock-message { margin-top: 12px; font-size: 0.7rem; text-align: right; color: #89b69c; font-style: italic; }
+        .disabled-opt { opacity: 0.65; pointer-events: none; background: #f2f5ef; cursor: default; }
+        .analysis-special { background: #fefbed; border-radius: 32px; padding: 0px 0px 12px 0px; border: 1px solid #f0e2bc; margin: 20px 0; }
+        .analysis-title { font-weight: 800; font-size: 1rem; padding: 20px 24px 8px 24px; color: #b17f2e; background: #fff8e7; border-bottom: 1px dashed #efdfb2; }
+        .phrase-list, .sentence-list { padding: 8px 24px 20px 24px; }
+        .phrase-item, .sentence-item { margin-bottom: 18px; padding: 10px 14px; background: #fffcf0; border-radius: 24px; border-left: 4px solid #cfb87c; }
+        .phrase-text { font-weight: 700; color: #3c6e47; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+        .phrase-en { background: #e8f0e3; padding: 2px 10px; border-radius: 40px; }
+        .phrase-zh { color: #b45f1b; font-weight: 500; font-size: 0.85rem; }
+        .phrase-example { font-size: 0.85rem; color: #5c6e5a; margin-top: 8px; padding-left: 8px; border-left: 2px solid #dfcca2; }
+        .sentence-grammar { background: #fef7e6; padding: 10px 14px; border-radius: 20px; margin-top: 10px; font-size: 0.85rem; }
+        .sentence-en { font-weight: 600; color: #2f6042; }
+        .sentence-zh { color: #a5651e; margin-top: 6px; font-size: 0.85rem; }
+        .clickable-word { border-bottom: 1px dashed #6f9a82; cursor: pointer; font-weight: 500; display: inline-block; }
+        .clickable-word:active { background: #d9f0e4; border-radius: 8px; }
+        .word-toast { position: fixed; bottom: 25%; left: 50%; transform: translateX(-50%) translateY(20px); background: #fffffff2; backdrop-filter: blur(8px); color: #2c5a44; padding: 12px 24px; border-radius: 50px; font-size: 1rem; font-weight: 600; z-index: 1000; max-width: 85vw; white-space: normal; text-align: center; box-shadow: 0 8px 24px rgba(0, 32, 0, 0.15), 0 0 0 1px rgba(100, 150, 120, 0.3); pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; opacity: 0; border: 1px solid #bdd8ca; }
+        .word-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .method-card { background: #eef3f0; border-radius: 28px; padding: 18px 22px; margin: 20px 0; }
+        .badge-method { background: #d9e6de; display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: bold; color: #2f6b48; }
+        .vocab-table, .sentence-table { width: 100%; border-collapse: collapse; background: #ffffffdd; border-radius: 24px; overflow: hidden; margin-top: 12px; }
+        .vocab-table th, .vocab-table td, .sentence-table th, .sentence-table td { border: 1px solid #dbeadf; padding: 10px 12px; vertical-align: top; font-size: 0.85rem; }
+        .vocab-table th, .sentence-table th { background: #e2f0e8; font-weight: 600; color: #245f41; }
+        .section-title-icon { margin: 20px 0 10px 0; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .editable-cell { background-color: #fffff2; }
+        @media (max-width: 640px) { body { padding: 16px 12px; } .question-panel { padding: 18px 16px 6px 16px; } .feedback-area { margin: 0 12px 16px 12px; } .phrase-list, .sentence-list { padding: 8px 16px 16px 16px; } }
+        footer { text-align: center; font-size: 0.7rem; color: #86a694; margin: 32px 0 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>✨ 赢未来国雅 · 英语练习考点精析 ✨</h1>
+        <p>DAY7 Quiz 2 · 自我接纳与成长 | 2022天津卷 | 点击查词 | 答案对比</p>
+        <div class="meta-info">📌 来源：2022天津卷 · 难度较难 · 完整释义库</div>
+    </div>
+    <div id="questionsRoot"></div>
+    <footer>💡 点击选项立即锁定答案。<span style="background:#e8f0e3;padding:2px 10px;border-radius:20px;">🔍 点击任意英文单词 → 弹出中文释义</span>，下方表格可自填复习。</footer>
+</div>
+<div id="wordToast" class="word-toast"></div>
+
+<script>
+    // ========== 完整释义库（覆盖初中以上所有词汇）==========
+    const meaningMap = {
+        // 文章核心词汇
+        "pre-medical": "医学预科的", "tall": "高的", "good-looking": "好看的", "short story": "短篇故事", "essays": "散文/随笔", "credit": "荣誉/学分",
+        "attainment": "获得/达到", "self-pride": "自尊", "self-love": "自爱", "struggle": "挣扎", "origin": "出身/起源", "burden": "负担",
+        "relocate": "搬迁", "Norway": "挪威", "golden": "金色的", "delicate": "精致的/脆弱的", "curly": "卷曲的", "sweat": "汗水",
+        "bury": "埋葬", "shell": "壳", "stuttering": "口吃", "self-confidence": "自信", "opportunity": "机会", "public speaking": "公开演讲",
+        "rule over": "支配", "turning point": "转折点", "astonishment": "惊讶", "genetic": "遗传的", "disorder": "疾病/紊乱",
+        "normal": "正常的", "twist": "转折", "cure": "治愈", "accidentally": "偶然地", "relieved": "宽慰的", "boost": "提升/增强",
+        "talk show host": "脱口秀主持人", "shame": "羞愧", "uniqueness": "独特性", "fantastic": "极好的",
+        // 选项词汇
+        "appearance": "外貌", "social discrimination": "社会歧视", "emotions": "情绪", "climate": "气候", "lack of": "缺乏",
+        "unwillingness": "不愿意", "greet": "打招呼", "desire": "渴望", "blessed": "幸运的", "proud": "自豪的",
+        "confused": "困惑的", "afraid": "害怕的", "amazed": "惊奇的", "relieved": "宽慰的", "shocked": "震惊的", "ashamed": "羞愧的",
+        "barrier": "障碍", "wisdom": "智慧", "counts": "重要", "weaknesses": "弱点",
+        "Pride comes before a fall": "骄兵必败", "Where there is a will, there is a way": "有志者事竟成",
+        "self-acceptance": "自我接纳", "attainment": "获得",
+        // 短语词汇
+        "take as": "把...当作", "contribute to": "导致", "stand between": "阻碍", "catch one's eye": "引起注意",
+        "take on a meaning": "具有意义",
+        // 常用动词/形容词/副词
+        "fueled": "加剧", "weakened": "削弱", "astonishment": "惊讶", "unconsciously": "无意识地", "practically": "几乎/实际上",
+        "formerly": "以前", "whispered": "低语", "hit": "突然想到", "filled with": "充满"
+    };
+    
+    function lookupMeaning(word) {
+        if (meaningMap[word]) return meaningMap[word];
+        var lower = word.toLowerCase();
+        if (meaningMap[lower]) return meaningMap[lower];
+        var withoutS = lower.replace(/s$/, '');
+        if (meaningMap[withoutS]) return meaningMap[withoutS];
+        var withoutEd = lower.replace(/ed$/, '');
+        if (meaningMap[withoutEd]) return meaningMap[withoutEd];
+        var withoutIng = lower.replace(/ing$/, '');
+        if (meaningMap[withoutIng]) return meaningMap[withoutIng];
+        return null;
+    }
+    
+    function showWordMeaning(word) {
+        var meaning = lookupMeaning(word);
+        if (!meaning) meaning = "✨ 可自行补充笔记";
+        var toast = document.getElementById("wordToast");
+        toast.innerText = word + "  ·  " + meaning;
+        toast.classList.add("show");
+        setTimeout(function() { toast.classList.remove("show"); }, 1500);
+    }
+    
+    function makeWordsClickable(container) {
+        if (!container) return;
+        var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+            acceptNode: function(node) {
+                if (node.parentElement && (node.parentElement.classList && node.parentElement.classList.contains('clickable-word')) ||
+                    (node.parentElement && node.parentElement.closest && node.parentElement.closest('.option, .disabled-opt, .feedback-area, .result-badge, .answer-compare, .detail-explanation')))
+                    return NodeFilter.FILTER_REJECT;
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
+        var nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+        nodes.forEach(function(textNode) {
+            var text = textNode.nodeValue;
+            if (!text || !text.trim()) return;
+            var regex = /\b([A-Za-z][A-Za-z\-']{1,35})\b/g;
+            var last = 0, match;
+            var frag = document.createDocumentFragment();
+            while ((match = regex.exec(text)) !== null) {
+                if (match.index > last) frag.appendChild(document.createTextNode(text.substring(last, match.index)));
+                var word = match[1];
+                var span = document.createElement('span');
+                span.className = 'clickable-word';
+                span.innerText = word;
+                span.addEventListener('click', (function(w) { return function(e) { e.stopPropagation(); showWordMeaning(w); }; })(word));
+                frag.appendChild(span);
+                last = match.index + match[0].length;
+            }
+            if (last < text.length) frag.appendChild(document.createTextNode(text.substring(last)));
+            if (frag.childNodes.length) textNode.parentNode.replaceChild(frag, textNode);
+        });
+    }
+    
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
+    // ========== 文章数据 ==========
+    var passageContent = `I'm an 18-year-old pre-medical student, tall and good-looking, with two short story books and quite a number of essays to my credit. Why am I singing such praises of myself? Just to explain that the attainment of self-pride comes from a great deal of self-love, and to attain it, one must first learn to accept oneself as one is. That was where my struggle began.
+
+Born and raised in Africa, I had always taken my African origin as a burden. My self-dislike was further fueled when my family had to relocate to Norway, where I attended a high school. Compared to all the white girls around me, with their golden hair and delicate lips, I, a black girl, had curly hair and full, red lips. My nose often had a thin sheet of sweat on it, whatever the weather was. I just wanted to bury myself in my shell crying "I'm so different!"
+
+What also contributed to my self-dislike was my occasional stuttering, which had weakened my self-confidence. It always stood between me and any fine opportunity. I'd taken it as an excuse to avoid any public speaking sessions, and unknowingly let it rule over me.
+
+Fortunately, as I grew older, there came a turning point. One day a white girl caught my eye on the school bus when she suddenly turned back. To my astonishment, she had a thin sheet of sweat on her nose too, and it was in November! "Wow," I whispered to myself, "this isn't a genetic disorder after all. It's perfectly normal." Days later, my life took another twist. Searching the internet for stuttering cures, I accidentally learned that such famous people as Isaac Newton and Winston Churchill also stuttered. I was greatly relieved and then an idea suddenly hit me—if I'm smart, I shouldn't allow my stuttering to stand between me and my success.
+
+Another boost to my self-confidence came days later as I was watching the news about Oprah Winfrey, the famous talk show host and writer—she's black too! Whenever I think of her story and my former dislike of my color, I'm practically filled with shame.
+
+Today, I've grown to accept what I am with pride; it simply gives me a feeling of uniqueness. The idea of self-love has taken on a whole new meaning for me: there's always something fantastic about ourselves.`;
+
+    // ========== 阅读理解题目 (41-45) ==========
+    var readingQuestions = [
+        { id: 41, text: "What affected the author's adjustment to her school life in Norway?", options: ["A. Her appearance.", "B. Social discrimination.", "C. Her changing emotions.", "D. The climate in Norway."], correct: "A", exp: "第二段：作者因为自己的外表（卷发、黑皮肤、鼻汗）与白人女孩不同而感到自卑。", note: "appearance 外貌是主要因素。" },
+        { id: 42, text: "What did the author's occasional stuttering bring about according to Paragraph 3?", options: ["A. Her lack of self-confidence.", "B. Her loss of interest in school.", "C. Her unwillingness to greet her classmates.", "D. Her desire for chances to improve herself."], correct: "A", exp: "第三段：口吃削弱了自信心，阻碍了机会。", note: "stuttering weakened her self-confidence" },
+        { id: 43, text: "How did the author feel on noticing the similarity between her and the girl on the bus?", options: ["A. Blessed and proud.", "B. Confused and afraid.", "C. Amazed and relieved.", "D. Shocked and ashamed."], correct: "C", exp: "第四段：她惊讶地发现白人女孩鼻子上也有汗，然后如释重负。", note: "astonished and relieved" },
+        { id: 44, text: "What lesson did the author learn from the cases of Newton and Churchill?", options: ["A. Great minds speak alike.", "B. Stuttering is no barrier to success.", "C. Wisdom counts more than hard work.", "D. Famous people can't live with their weaknesses."], correct: "B", exp: "第四段：牛顿和丘吉尔也口吃，但他们成功了。", note: "stuttering is no barrier to success" },
+        { id: 45, text: "What can best summarize the message contained in the passage?", options: ["A. Pride comes before a fall.", "B. Where there is a will, there is a way.", "C. Self-acceptance is based on the love for oneself.", "D. Self-love is key to the attainment of self-pride."], correct: "D", exp: "全文主旨：自尊来自于自爱，要先接纳自己。", note: "self-love is key to self-pride" }
+    ];
+
+    // ========== 高频短语 ==========
+    var phraseList = [
+        { phrase: "to one's credit", meaning: "值得赞扬；为某人增光", example: "He has two books to his credit." },
+        { phrase: "take as a burden", meaning: "视为负担", example: "I took my African origin as a burden." },
+        { phrase: "contribute to", meaning: "导致；促成", example: "Stuttering contributed to my self-dislike." },
+        { phrase: "stand between", meaning: "阻碍", example: "It stood between me and any fine opportunity." },
+        { phrase: "catch one's eye", meaning: "引起某人注意", example: "A white girl caught my eye on the bus." },
+        { phrase: "to one's astonishment", meaning: "令某人惊讶的是", example: "To my astonishment, she had sweat too." },
+        { phrase: "hit sb", meaning: "突然想到", example: "An idea suddenly hit me." },
+        { phrase: "take on a new meaning", meaning: "具有新意义", example: "Self-love took on a whole new meaning." }
+    ];
+
+    // ========== 长难句 ==========
+    var longSentences = [
+        { sentence: "Born and raised in Africa, I had always taken my African origin as a burden.", trans: "在非洲出生和长大，我一直把自己的非洲出身视为一种负担。", analysis: "过去分词短语Born and raised作状语，表示伴随状态。" },
+        { sentence: "What also contributed to my self-dislike was my occasional stuttering, which had weakened my self-confidence.", trans: "另一个导致我自我厌恶的因素是我偶尔的口吃，它削弱了我的自信心。", analysis: "What引导主语从句，which引导非限制性定语从句。" },
+        { sentence: "Searching the internet for stuttering cures, I accidentally learned that such famous people as Isaac Newton and Winston Churchill also stuttered.", trans: "在网上搜索口吃治疗方法时，我偶然了解到艾萨克·牛顿和温斯顿·丘吉尔等名人也口吃。", analysis: "现在分词短语Searching作时间状语，that引导宾语从句。" },
+        { sentence: "If I'm smart, I shouldn't allow my stuttering to stand between me and my success.", trans: "如果我聪明，就不应该让口吃阻碍我的成功。", analysis: "if引导条件状语从句，allow sb/sth to do sth结构。" }
+    ];
+
+    // ========== 解题策略 ==========
+    var strategyBlock = `
+        <div class="method-card">
+            <div class="badge-method">🎯 阅读理解 · 解题策略思路</div>
+            <ul style="margin-left:20px; margin-top:12px; color:#375e4c; line-height:1.5;">
+                <li><strong>1. 细节理解题（41-42题）：</strong> 定位原文，找到关键词 appearance / stuttering。</li>
+                <li><strong>2. 情感态度题（43题）：</strong> 关注情感词汇 astonished / relieved。</li>
+                <li><strong>3. 推理判断题（44题）：</strong> 牛顿和丘吉尔的例子说明口吃不妨碍成功。</li>
+                <li><strong>4. 主旨大意题（45题）：</strong> 文章围绕 self-love → self-pride 展开。</li>
+                <li><strong>5. 长难句简化：</strong> 找主谓，去修饰成分，理解主干后再补充细节。</li>
+            </ul>
+        </div>
+    `;
+
+    var root = document.getElementById("questionsRoot");
+    var html = '';
+
+    // 阅读文章卡片
+    html += '<div class="card"><div class="question-panel"><div class="question-text">📖 阅读理解 · 从自我否定到自我接纳 (2022天津卷)</div><div class="reading-passage" id="readingPassage">' + escapeHtml(passageContent) + '</div></div></div>';
+    
+    // 阅读理解题目
+    for (var i = 0; i < readingQuestions.length; i++) { var q = readingQuestions[i];
+        html += '<div class="card" data-qid="rd_' + q.id + '" data-correct="' + q.correct + '" data-exp="' + escapeHtml(q.exp) + '" data-note="' + escapeHtml(q.note) + '"><div class="question-panel"><div class="question-text">' + q.id + '. ' + escapeHtml(q.text) + '</div><div class="options-list">';
+        for (var j = 0; j < q.options.length; j++) { var opt = q.options[j];
+            html += '<div class="option" data-val="' + opt[0] + '"><div class="option-letter">' + opt[0] + '</div><div class="option-text">' + escapeHtml(opt) + '</div></div>';
+        }
+        html += '</div></div><div class="feedback-area" style="display:none;"></div></div>';
+    }
+    
+    // 高频短语板块
+    html += '<div class="card"><div class="analysis-special"><div class="analysis-title">📚 高频搭配 & 核心短语 · 长难句精析</div><div class="phrase-list"><strong style="display:block; margin-bottom:14px;">🔖 常考短语 (含释义+例句)</strong>';
+    for (var i = 0; i < phraseList.length; i++) { var p = phraseList[i];
+        html += '<div class="phrase-item"><div class="phrase-text"><span class="phrase-en">' + escapeHtml(p.phrase) + '</span><span class="phrase-zh">' + escapeHtml(p.meaning) + '</span></div><div class="phrase-example">💬 ' + escapeHtml(p.example) + '</div></div>';
+    }
+    html += '</div><div class="sentence-list"><strong style="display:block; margin:20px 0 14px;">🧩 长难句 + 语法分析</strong>';
+    for (var i = 0; i < longSentences.length; i++) { var ls = longSentences[i];
+        html += '<div class="sentence-item"><div class="sentence-en">📖 ' + escapeHtml(ls.sentence) + '</div><div class="sentence-zh">📝 中文：' + escapeHtml(ls.trans) + '</div><div class="sentence-grammar">📌 语法解析：' + escapeHtml(ls.analysis) + '</div></div>';
+    }
+    html += '</div></div></div>';
+    
+    // 解题策略
+    html += strategyBlock;
+    
+    // 难词表（可编辑）
+    html += '<div class="card" style="padding:16px 22px 22px 22px;"><div class="section-title-icon">📘 我的难词表 · 自主复习</div><table class="vocab-table"><thead><tr><th>序号</th><th>单词</th><th>词性及释义</th><th>我的笔记</th></tr></thead><tbody id="vocabTbody">';
+    for (var i = 0; i < 10; i++) { html += '<tr><td>' + (i+1) + '</td><td contenteditable="true" class="editable-cell"></td><td contenteditable="true" class="editable-cell"></td><td contenteditable="true" class="editable-cell"></td></tr>'; }
+    html += '</tbody></table><div class="section-title-icon" style="margin-top:24px;">📜 长难句积累 · 语料库</div><table class="sentence-table"><thead><tr><th>序号</th><th>长难句</th><th>备注（翻译/结构分析）</th></tr></thead><tbody id="sentenceTbody">';
+    for (var i = 0; i < 5; i++) { html += '<tr><td>' + (i+1) + '</td><td contenteditable="true" class="editable-cell"></td><td contenteditable="true" class="editable-cell"></td></tr>'; }
+    html += '</tbody></table><div style="font-size:0.7rem; color:#8aa998; margin-top:12px;">✏️ 点击单元格即可填写，自由记录难词和长难句分析，方便复习。</div></div>';
+    
+    root.innerHTML = html;
+    
+    // 使可点击
+    var passageDiv = document.getElementById("readingPassage");
+    if (passageDiv) makeWordsClickable(passageDiv);
+    document.querySelectorAll(".question-text, .option-text, .phrase-item, .sentence-item, .method-card, .phrase-example, .sentence-en, .sentence-zh").forEach(function(el) { if (el) makeWordsClickable(el); });
+    
+    // 绑定选择题事件
+    document.querySelectorAll('.card[data-qid]').forEach(function(card) {
+        var correct = card.getAttribute('data-correct');
+        var exp = card.getAttribute('data-exp') || "根据上下文分析得出。";
+        var note = card.getAttribute('data-note') || "注意题干关键词与原文同义转述。";
+        var optsDiv = card.querySelector('.options-list');
+        if (!optsDiv) return;
+        var opts = optsDiv.querySelectorAll('.option');
+        opts.forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                if (card.classList.contains('answered')) return;
+                var selected = opt.getAttribute('data-val');
+                var isCorrect = (selected === correct);
+                var fb = card.querySelector('.feedback-area');
+                if (!fb) return;
+                var yourFull = selected, correctFull = correct;
+                opts.forEach(function(o) { if(o.getAttribute('data-val') === selected) yourFull = o.querySelector('.option-text')?.innerText || selected; if(o.getAttribute('data-val') === correct) correctFull = o.querySelector('.option-text')?.innerText || correct; });
+                fb.innerHTML = '<div class="result-badge ' + (isCorrect ? 'correct-badge' : 'wrong-badge') + '">' + (isCorrect ? '✔ 回答正确' : '❌ 回答错误') + '</div><div class="answer-compare"><div class="your-answer">📌 你的答案：' + selected + '. ' + escapeHtml(yourFull) + '</div><div class="correct-answer">✅ 正确答案：' + correct + '. ' + escapeHtml(correctFull) + '</div></div><div class="detail-explanation"><strong>🔎 详细解析：</strong> ' + escapeHtml(exp) + '<br/><strong>📘 考点笔记：</strong> ' + escapeHtml(note) + '</div><div class="lock-message">🔒 答案已锁定，不可修改</div>';
+                fb.style.display = 'block';
+                card.classList.add('answered');
+                opts.forEach(function(o) { o.classList.add('disabled-opt'); });
+            });
+        });
+    });
+</script>
+</body>
+</html>
