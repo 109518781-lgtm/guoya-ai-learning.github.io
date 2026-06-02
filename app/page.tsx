@@ -34,8 +34,8 @@ export default function HomePage() {
               进入任天堂风格的学习地图，挑战关卡、获得星星金币、兑换奖励与抽卡收藏。
             </p>
             <Button asChild size="lg" className="mt-7 w-full">
-              <Link href="/student">
-                进入学生端 <ArrowRight size={20} />
+              <Link href="/login/student">
+                学生登录 <ArrowRight size={20} />
               </Link>
             </Button>
           </Card>
@@ -49,8 +49,8 @@ export default function HomePage() {
               创建学生档案、上传资料、审核AI提取内容、发布任务并追踪学习画像。
             </p>
             <Button asChild size="lg" variant="blue" className="mt-7 w-full">
-              <Link href="/teacher">
-                进入教师端 <ArrowRight size={20} />
+              <Link href="/login/teacher">
+                教师登录 <ArrowRight size={20} />
               </Link>
             </Button>
           </Card>

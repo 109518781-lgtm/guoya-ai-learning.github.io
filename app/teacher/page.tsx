@@ -13,6 +13,7 @@ import {
   Users,
   WandSparkles
 } from "lucide-react";
+import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -72,6 +73,9 @@ export default function TeacherPage() {
             <div className="flex flex-wrap gap-2">
               <Button variant="outline">
                 <RefreshCw size={18} /> 同步数据
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/login/teacher">退出</Link>
               </Button>
               <Button>
                 <Plus size={18} /> 新建任务

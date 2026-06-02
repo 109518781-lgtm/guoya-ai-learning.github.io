@@ -46,6 +46,9 @@ export function StudentShell({
           <Button variant="outline" size="icon" aria-label="设置">
             <Settings size={20} />
           </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/login/student">退出</Link>
+          </Button>
         </div>
       </header>
 

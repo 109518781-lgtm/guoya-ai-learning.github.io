@@ -28,7 +28,7 @@ export interface AiProvider {
 export class MockAiProvider implements AiProvider {
   name: AiProviderName = "deepseek";
 
-  async extractLearningTask(): Promise<AiExtractResult> {
+  async extractLearningTask(_request: AiExtractRequest): Promise<AiExtractResult> {
     return {
       vocabulary: ["borrow", "library", "carefully"],
       phrases: ["look for", "on time", "be good at"],

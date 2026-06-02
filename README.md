@@ -14,6 +14,8 @@
 ## 路由
 
 - `/` 首页：只显示 Logo、学生入口、教师入口
+- `/login/student` 学生登录，演示账号 `student / 123456`
+- `/login/teacher` 教师登录，演示账号 `teacher / 123456`
 - `/student` 学生端学习地图
 - `/student/practice` 学生沉浸式答题页
 - `/student/shop` 学生金币商城
@@ -26,6 +28,7 @@
 - `lib/ai/provider.ts`：AI Provider Layer，可切换 DeepSeek、OpenAI、Claude、Gemini
 - `lib/mock-data.ts`：当前 UI mock data，未来替换为数据库数据
 - `app/api/ai/extract/route.ts`：未来 DeepSeek 调用必须走后端 API route，API Key 不写入前端
+- `lib/auth/mock-auth.ts`：Mock authentication provider，未来可替换 Supabase Auth 或 NextAuth
 - 教师端已预留文件上传、AI解析审核、任务发布、商城管理、订单管理
 
 ## 本地运行
