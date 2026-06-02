@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, GraduationCap, KeyRound, Lock, UserRound } from "lucide-react";
+import { ArrowRight, GraduationCap, KeyRound, UserRound } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,21 +14,17 @@ import { cn } from "@/lib/utils";
 const roleCopy = {
   student: {
     title: "学生登录",
-    subtitle: "学生档案由老师创建。学生不能修改真实姓名、账号或密码。",
-    demo: "演示账号：student / 123456",
+    subtitle: "进入你的英语闯关地图。",
     badge: "学生端",
     accent: "green",
-    icon: UserRound,
-    notes: ["真实姓名由老师管理", "账号和密码由老师创建", "忘记密码请找老师重置"]
+    icon: UserRound
   },
   teacher: {
     title: "教师登录",
-    subtitle: "教师可管理学生档案、重置学生密码，后续支持修改自己的密码。",
-    demo: "演示账号：teacher / 123456",
+    subtitle: "进入教学后台，创建任务并查看学习数据。",
     badge: "教师端",
     accent: "blue",
-    icon: GraduationCap,
-    notes: ["创建和管理学生账号", "可重置学生密码", "后续支持教师修改自己的密码"]
+    icon: GraduationCap
   }
 };
 
@@ -71,20 +67,12 @@ export function LoginCard({ role }: { role: AuthRole }) {
               {copy.subtitle}
             </p>
           </div>
-          <div className="grid gap-3">
-            {copy.notes.map((note) => (
-              <div key={note} className="flex items-center gap-3 rounded-3xl bg-white/80 p-4 shadow-sm">
-                <div
-                  className={cn(
-                    "grid h-10 w-10 place-items-center rounded-2xl",
-                    role === "student" ? "bg-lime-100 text-brand-green" : "bg-blue-100 text-brand-blue"
-                  )}
-                >
-                  <Lock size={18} />
-                </div>
-                <span className="text-sm font-black text-slate-700">{note}</span>
-              </div>
-            ))}
+          <div className="rounded-[32px] border border-white/70 bg-white/80 p-5 shadow-soft">
+            <p className="text-sm font-bold leading-7 text-slate-600">
+              {role === "student"
+                ? "完成关卡、获得星星金币、修复错题。"
+                : "上传资料、AI解析审核、发布任务。"}
+            </p>
           </div>
         </div>
 
@@ -109,7 +97,7 @@ export function LoginCard({ role }: { role: AuthRole }) {
                     onChange={(event) => setAccount(event.target.value)}
                     required
                     className="min-w-0 flex-1 bg-transparent text-base font-bold outline-none"
-                    placeholder={role === "student" ? "student" : "teacher"}
+                    placeholder="请输入账号"
                   />
                 </div>
               </label>
@@ -124,7 +112,7 @@ export function LoginCard({ role }: { role: AuthRole }) {
                     required
                     type="password"
                     className="min-w-0 flex-1 bg-transparent text-base font-bold outline-none"
-                    placeholder="123456"
+                    placeholder="请输入密码"
                   />
                 </div>
               </label>
@@ -138,10 +126,6 @@ export function LoginCard({ role }: { role: AuthRole }) {
                 <ArrowRight size={20} />
               </Button>
             </form>
-
-            <div className="mt-6 rounded-3xl bg-slate-50 p-4 text-sm font-bold leading-7 text-slate-600">
-              {copy.demo}
-            </div>
 
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm font-black">
               <Link href="/" className="text-slate-500 hover:text-slate-900">

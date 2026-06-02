@@ -1,9 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import type React from "react";
+import { useEffect, useState } from "react";
 import { Bell, Coins, Flame, Settings, ShoppingBag, Sparkles, Star } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { studentProfile } from "@/lib/mock-data";
+import { getInitialPlatformState, loadPlatformState, PlatformState } from "@/lib/learning-store";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -20,6 +24,12 @@ export function StudentShell({
   children: React.ReactNode;
   active: string;
 }) {
+  const [state, setState] = useState<PlatformState>(getInitialPlatformState());
+
+  useEffect(() => {
+    setState(loadPlatformState());
+  }, []);
+
   return (
     <main className="min-h-screen overflow-hidden bg-[#F8FAFC]">
       <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(255,217,61,.28),transparent_24rem),radial-gradient(circle_at_80%_12%,rgba(77,150,255,.22),transparent_26rem),linear-gradient(180deg,#F8FAFC,#EEFDF0)]" />
@@ -71,8 +81,8 @@ export function StudentShell({
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <StatusPill icon={<Flame size={22} />} label="连续学习" value={`${studentProfile.streakDays}天`} color="bg-red-100 text-brand-red" />
-          <StatusPill icon={<Star size={22} />} label="星星" value={studentProfile.stars} color="bg-yellow-100 text-yellow-700" />
-          <StatusPill icon={<Coins size={22} />} label="金币" value={studentProfile.coins} color="bg-orange-100 text-brand-orange" />
+          <StatusPill icon={<Star size={22} />} label="星星" value={state.progress.stars} color="bg-yellow-100 text-yellow-700" />
+          <StatusPill icon={<Coins size={22} />} label="金币" value={state.progress.coins} color="bg-orange-100 text-brand-orange" />
           <StatusPill icon={<Sparkles size={22} />} label="徽章" value={studentProfile.badges.length} color="bg-purple-100 text-brand-purple" />
         </div>
       </section>
