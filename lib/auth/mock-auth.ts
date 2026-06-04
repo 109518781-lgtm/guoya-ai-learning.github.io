@@ -12,6 +12,8 @@ export interface AuthSession {
   account: string;
   role: AuthRole;
   displayName: string;
+  studentId?: string;
+  teacherId?: string;
 }
 
 export interface AuthProvider {
@@ -43,10 +45,36 @@ export async function mockSignIn(
   password: string,
   role: AuthRole
 ): Promise<AuthSession> {
+  if (typeof window !== "undefined") {
+    const { loadPlatformState } = await import("@/lib/learning-store");
+    const state = loadPlatformState();
+    if (role === "student") {
+      const student = state.students.find((item) => item.account === account && item.password === password);
+      if (student) {
+        return {
+          account: student.account,
+          role: "student",
+          displayName: student.name,
+          studentId: student.id
+        };
+      }
+    }
+    if (role === "teacher") {
+      const teacher = state.teachers.find((item) => item.account === account && item.password === password);
+      if (teacher) {
+        return {
+          account: teacher.account,
+          role: "teacher",
+          displayName: teacher.name,
+          teacherId: teacher.id
+        };
+      }
+    }
+  }
+
   const user = mockUsers.find(
     (item) => item.account === account && item.password === password && item.role === role
   );
-
   if (!user) {
     throw new Error("账号或密码不正确");
   }
@@ -54,8 +82,21 @@ export async function mockSignIn(
   return {
     account: user.account,
     role: user.role,
-    displayName: user.displayName
+    displayName: user.displayName,
+    studentId: user.role === "student" ? "student-demo" : undefined,
+    teacherId: user.role === "teacher" ? "teacher-demo" : undefined
   };
+}
+
+export function getStoredSession(): AuthSession | null {
+  if (typeof window === "undefined") return null;
+  const raw = window.localStorage.getItem(authStorageKey);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as AuthSession;
+  } catch {
+    return null;
+  }
 }
 
 export function getRoleHome(role: AuthRole) {

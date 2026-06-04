@@ -1,28 +1,34 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import type React from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { CheckCircle2, Coins, HelpCircle, RotateCcw, Star, WandSparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { getStoredSession } from "@/lib/auth/mock-auth";
 import {
   advanceAfterCorrect,
-  getActiveTask,
+  getAssignedTasks,
   getInitialPlatformState,
   getNextQuestion,
+  getOrCreateProgress,
+  getRewardWallet,
   getStageProgress,
   LearningQuestion,
   loadPlatformState,
   markWrong,
   PlatformState,
   savePlatformState,
+  skipEmptyStage,
   stages
 } from "@/lib/learning-store";
 import { cn } from "@/lib/utils";
 
 export function PracticeClient() {
   const [state, setState] = useState<PlatformState>(getInitialPlatformState());
+  const [studentId, setStudentId] = useState("student-demo");
   const [selectedChoice, setSelectedChoice] = useState("");
   const [selectedBlocks, setSelectedBlocks] = useState<string[]>([]);
   const [bank, setBank] = useState<string[]>([]);
@@ -34,24 +40,31 @@ export function PracticeClient() {
 
   useEffect(() => {
     const stored = loadPlatformState();
+    const id = getStoredSession()?.studentId || "student-demo";
+    const task = getAssignedTasks(stored, id)[0];
+    if (task) getOrCreateProgress(stored, id, task.id);
+    savePlatformState(stored);
+    setStudentId(id);
     setState(stored);
   }, []);
 
-  const task = useMemo(() => getActiveTask(state), [state]);
-  const question = useMemo(() => getNextQuestion(task, state.progress), [task, state]);
-  const currentStage = stages.find((stage) => stage.id === state.progress.currentStage) || stages[0];
-  const stagePercent = getStageProgress(currentStage.id, task, state.progress);
-  const currentGuidance = question.guidance[step];
+  const task = useMemo(() => getAssignedTasks(state, studentId)[0], [state, studentId]);
+  const progress = task ? getOrCreateProgress(structuredClone(state) as PlatformState, studentId, task.id) : null;
+  const question = task && progress ? getNextQuestion(task, progress) : undefined;
+  const currentStage = stages.find((stage) => stage.id === progress?.currentStage) || stages[0];
+  const stagePercent = task && progress ? getStageProgress(currentStage.id, task, progress) : 0;
+  const wallet = getRewardWallet(state, studentId);
+  const currentGuidance = question?.guidance[step];
 
   useEffect(() => {
-    resetAnswer(question);
+    if (question) resetAnswer(question);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [question.id]);
+  }, [question?.id]);
 
   function resetAnswer(activeQuestion = question) {
     setSelectedChoice("");
     setSelectedBlocks([]);
-    setBank(activeQuestion.blocks || []);
+    setBank(activeQuestion?.blocks || []);
     setFeedback("");
     setGuided(false);
     setStep(0);
@@ -69,22 +82,27 @@ export function PracticeClient() {
     setBank((items) => [...items, block]);
   }
 
-  function currentAnswer() {
-    if (question.mode === "choice") return selectedChoice;
-    if (question.mode === "letters") return selectedBlocks.join("");
+  function currentAnswer(activeQuestion: LearningQuestion) {
+    if (activeQuestion.mode === "choice") return selectedChoice;
+    if (activeQuestion.mode === "letters") return selectedBlocks.join("");
     return selectedBlocks.join(" ");
   }
 
   function check() {
-    if (!currentAnswer()) {
+    if (!question || !task) return;
+    if (question.needsAnswer || question.answer === "待老师补充答案") {
+      setFeedback("这题还需要老师补充答案，暂时不能判分。");
+      return;
+    }
+    if (!currentAnswer(question)) {
       setFeedback("请先完成作答。");
       return;
     }
-    if (normalize(currentAnswer()) === normalize(question.answer)) {
+    if (normalize(currentAnswer(question)) === normalize(question.answer)) {
       completeQuestion(question);
       return;
     }
-    const next = markWrong(state, question.id);
+    const next = markWrong(state, question.id, studentId, task.id);
     setState(next);
     savePlatformState(next);
     setFeedback("还差一点。分步引导已解锁，但不会直接给最终答案。");
@@ -92,7 +110,8 @@ export function PracticeClient() {
   }
 
   function completeQuestion(activeQuestion: LearningQuestion) {
-    const next = advanceAfterCorrect(state, activeQuestion);
+    if (!task) return;
+    const next = advanceAfterCorrect(state, activeQuestion, studentId, task.id);
     setState(next);
     savePlatformState(next);
     setCompleted(true);
@@ -103,7 +122,8 @@ export function PracticeClient() {
   }
 
   function startGuidance() {
-    const next = markWrong(state, question.id);
+    if (!question || !task) return;
+    const next = markWrong(state, question.id, studentId, task.id);
     setState(next);
     savePlatformState(next);
     setGuided(true);
@@ -111,11 +131,12 @@ export function PracticeClient() {
   }
 
   function answerGuidance(answer: string) {
+    if (!currentGuidance) return;
     if (answer !== currentGuidance.answer) {
       setFeedback("这一步还不对，再找关键词。");
       return;
     }
-    if (step < question.guidance.length - 1) {
+    if (question && step < question.guidance.length - 1) {
       setStep((value) => value + 1);
       setFeedback("这一步答对了，继续下一步。");
       return;
@@ -125,7 +146,46 @@ export function PracticeClient() {
   }
 
   function continueAdventure() {
-    resetAnswer(getNextQuestion(state ? getActiveTask(state) : task, state.progress));
+    resetAnswer();
+  }
+
+  function skipStage() {
+    if (!task) return;
+    setState(skipEmptyStage(state, studentId, task.id));
+  }
+
+  if (!task || !progress) {
+    return (
+      <div className="game-card p-8 text-center">
+        <h1 className="text-3xl font-black text-slate-950">老师还没有给你发布学习任务。</h1>
+        <p className="mt-3 text-sm font-bold text-slate-500">发布后，你就可以从单词森林开始闯关。</p>
+      </div>
+    );
+  }
+
+  if (!question) {
+    return (
+      <div className="grid gap-5 xl:grid-cols-[1.35fr_.75fr]">
+        <section className="game-card min-h-[460px] p-8">
+          <div className="inline-flex rounded-full bg-blue-100 px-4 py-2 text-xs font-black text-blue-700">{currentStage.name}</div>
+          <h1 className="mt-5 text-3xl font-black text-slate-950">本关暂无内容</h1>
+          <p className="mt-3 max-w-xl text-sm font-bold leading-7 text-slate-600">
+            这份任务暂时没有解析出{currentStage.short}内容。你可以继续前往下一关，或者请老师在审核区补充内容。
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button onClick={skipStage} size="lg">继续下一关</Button>
+            <Button asChild variant="outline" size="lg"><Link href="/student">返回地图</Link></Button>
+          </div>
+        </section>
+        <Card>
+          <CardHeader><CardTitle>当前奖励</CardTitle></CardHeader>
+          <CardContent className="grid grid-cols-2 gap-3">
+            <RewardBox icon={<Star />} label="星星" value={wallet.stars} />
+            <RewardBox icon={<Coins />} label="金币" value={wallet.coins} />
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -160,7 +220,7 @@ export function PracticeClient() {
             removeBlock={removeBlock}
           />
 
-          {guided ? (
+          {guided && currentGuidance ? (
             <div className="mt-8 rounded-[32px] border-2 border-purple-200 bg-purple-50 p-5">
               <div className="mb-4 flex items-center gap-2 text-sm font-black text-purple-700">
                 <WandSparkles size={20} /> 分步引导 {step + 1}/{question.guidance.length}
@@ -211,9 +271,7 @@ export function PracticeClient() {
       <aside className="grid content-start gap-5">
         {completed ? (
           <Card>
-            <CardHeader>
-              <CardTitle>本题结束总结</CardTitle>
-            </CardHeader>
+            <CardHeader><CardTitle>本题结束总结</CardTitle></CardHeader>
             <CardContent className="grid gap-3">
               <SummaryItem label="这题最关键的突破口" value={question.summary.breakthrough} />
               <SummaryItem label="以后遇到同类题怎么办" value={question.summary.method} />
@@ -223,9 +281,7 @@ export function PracticeClient() {
           </Card>
         ) : (
           <Card className="bg-gradient-to-br from-white to-blue-50">
-            <CardHeader>
-              <CardTitle>独立作答中</CardTitle>
-            </CardHeader>
+            <CardHeader><CardTitle>独立作答中</CardTitle></CardHeader>
             <CardContent>
               <p className="text-sm font-bold leading-7 text-slate-600">
                 本题总结会在你最终完成本题后出现。答错或点击“不会做”才会打开分步引导。
@@ -235,12 +291,10 @@ export function PracticeClient() {
         )}
 
         <Card className="bg-gradient-to-br from-white to-yellow-50">
-          <CardHeader>
-            <CardTitle>当前奖励</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>当前奖励</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-2 gap-3">
-            <RewardBox icon={<Star />} label="星星" value={state.progress.stars} />
-            <RewardBox icon={<Coins />} label="金币" value={state.progress.coins} />
+            <RewardBox icon={<Star />} label="星星" value={wallet.stars} />
+            <RewardBox icon={<Coins />} label="金币" value={wallet.coins} />
           </CardContent>
         </Card>
       </aside>
@@ -329,7 +383,7 @@ function SummaryItem({ label, value }: { label: string; value: string }) {
   );
 }
 
-function RewardBox({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) {
+function RewardBox({ icon, label, value }: { icon: React.ReactNode; label: string | number; value: string | number }) {
   return (
     <div className="rounded-3xl bg-white p-4 text-center shadow-sm">
       <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-yellow-100 text-yellow-700">{icon}</div>

@@ -2,25 +2,29 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Castle, Factory, Flag, Lock, Mountain, Star, TentTree, TowerControl, Trees, Waves } from "lucide-react";
+import { Castle, Factory, Flag, Lock, Mountain, Star, TowerControl, Trees, Waves, Tent } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
-  getActiveTask,
+  getAssignedTasks,
   getInitialPlatformState,
+  getOrCreateProgress,
+  getRewardWallet,
   getStageProgress,
   isStageUnlocked,
   loadPlatformState,
   PlatformState,
+  savePlatformState,
   stages
 } from "@/lib/learning-store";
+import { getStoredSession } from "@/lib/auth/mock-auth";
 import { cn } from "@/lib/utils";
 
 const sceneIcons = {
   vocab: Trees,
-  phrase: TentTree,
+  phrase: Tent,
   sentence: Factory,
   grammar: Castle,
   reading: Waves,
@@ -40,12 +44,39 @@ const nodePositions = [
 
 export function StudentMapClient() {
   const [state, setState] = useState<PlatformState>(getInitialPlatformState());
+  const [studentId, setStudentId] = useState("student-demo");
 
   useEffect(() => {
-    setState(loadPlatformState());
+    const stored = loadPlatformState();
+    const id = getStoredSession()?.studentId || "student-demo";
+    const assigned = getAssignedTasks(stored, id);
+    if (assigned[0]) {
+      getOrCreateProgress(stored, id, assigned[0].id);
+      savePlatformState(stored);
+    }
+    setStudentId(id);
+    setState(stored);
   }, []);
 
-  const task = useMemo(() => getActiveTask(state), [state]);
+  const task = useMemo(() => getAssignedTasks(state, studentId)[0], [state, studentId]);
+  const progress = task ? getOrCreateProgress(structuredClone(state) as PlatformState, studentId, task.id) : null;
+  const wallet = getRewardWallet(state, studentId);
+
+  if (!task || !progress) {
+    return (
+      <div className="game-card min-h-[520px] overflow-hidden p-8">
+        <div className="relative rounded-[36px] bg-gradient-to-br from-lime-100 via-sky-100 to-yellow-100 p-8 text-center">
+          <div className="mx-auto grid h-28 w-28 place-items-center rounded-[36px] bg-white text-brand-green shadow-game">
+            <Flag size={54} />
+          </div>
+          <h1 className="mt-6 text-3xl font-black text-slate-950">老师还没有给你发布学习任务。</h1>
+          <p className="mx-auto mt-3 max-w-xl text-sm font-bold leading-7 text-slate-600">
+            等老师在后台发布后，这里会自动生成单词森林、短语营地、语法城堡和错题Boss塔。
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-5 xl:grid-cols-[1.55fr_.8fr]">
@@ -54,7 +85,7 @@ export function StudentMapClient() {
 
         <div className="relative z-20 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <Badge variant="green">当前任务 · {task?.title || "等待老师发布"}</Badge>
+            <Badge variant="green">当前任务 · {task.title}</Badge>
             <h1 className="mt-3 text-3xl font-black text-slate-950 sm:text-5xl">冒险学习地图</h1>
             <p className="mt-3 max-w-2xl text-sm font-black leading-7 text-slate-700/80">
               沿着小路通关英语考试：每一关 100% 正确后，下一关才会点亮。
@@ -85,10 +116,10 @@ export function StudentMapClient() {
 
         <div className="absolute inset-0 z-20">
           {stages.map((stage, index) => {
-            const unlocked = task ? isStageUnlocked(stage.id, task, state.progress) : false;
-            const percent = task ? getStageProgress(stage.id, task, state.progress) : 0;
+            const unlocked = isStageUnlocked(stage.id, task, progress);
+            const percent = getStageProgress(stage.id, task, progress);
             const completed = percent === 100;
-            const current = state.progress.currentStage === stage.id;
+            const current = progress.currentStage === stage.id;
             const Icon = sceneIcons[stage.id];
             return (
               <Link
@@ -119,7 +150,9 @@ export function StudentMapClient() {
                   ))}
                 </div>
                 <p className="mt-2 text-xs font-black text-slate-500">
-                  {completed ? "已点亮" : current ? "发光挑战中" : unlocked ? "可挑战" : "未解锁"}
+                  {getStageProgress(stage.id, task, progress) === 0 && !task.questions.some((item) => item.stage === stage.id)
+                    ? "本关暂无内容"
+                    : completed ? "已点亮" : current ? "发光挑战中" : unlocked ? "可挑战" : "未解锁"}
                 </p>
               </Link>
             );
@@ -137,9 +170,9 @@ export function StudentMapClient() {
               <div key={stage.id} className="rounded-3xl bg-slate-50 p-4">
                 <div className="mb-2 flex justify-between text-sm font-black text-slate-700">
                   <span>{stage.name}</span>
-                  <span>{task ? getStageProgress(stage.id, task, state.progress) : 0}%</span>
+                  <span>{getStageProgress(stage.id, task, progress)}%</span>
                 </div>
-                <Progress value={task ? getStageProgress(stage.id, task, state.progress) : 0} className="h-3" />
+                <Progress value={getStageProgress(stage.id, task, progress)} className="h-3" />
               </div>
             ))}
           </CardContent>
@@ -150,8 +183,8 @@ export function StudentMapClient() {
             <CardTitle>奖励状态</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-3">
-            <Reward label="星星" value={state.progress.stars} />
-            <Reward label="金币" value={state.progress.coins} />
+            <Reward label="星星" value={wallet.stars} />
+            <Reward label="金币" value={wallet.coins} />
           </CardContent>
         </Card>
 
@@ -161,7 +194,7 @@ export function StudentMapClient() {
           </CardHeader>
           <CardContent>
             <p className="text-sm font-bold leading-7 text-slate-600">
-              当前错题 {state.progress.wrongQuestionIds.length} 道，修复 {state.progress.repairedQuestionIds.length} 道。
+              当前错题 {progress.wrongQuestionIds.length} 道，修复 {progress.repairedQuestionIds.length} 道。
             </p>
             <Button asChild variant="red" className="mt-4 w-full">
               <Link href="/student/practice">进入错题Boss塔</Link>

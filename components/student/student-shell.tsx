@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { Bell, Coins, Flame, Settings, ShoppingBag, Sparkles, Star } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
-import { studentProfile } from "@/lib/mock-data";
-import { getInitialPlatformState, loadPlatformState, PlatformState } from "@/lib/learning-store";
+import { getStoredSession } from "@/lib/auth/mock-auth";
+import { getInitialPlatformState, getRewardWallet, loadPlatformState, PlatformState } from "@/lib/learning-store";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -25,10 +25,15 @@ export function StudentShell({
   active: string;
 }) {
   const [state, setState] = useState<PlatformState>(getInitialPlatformState());
+  const [studentId, setStudentId] = useState("student-demo");
 
   useEffect(() => {
     setState(loadPlatformState());
+    setStudentId(getStoredSession()?.studentId || "student-demo");
   }, []);
+
+  const student = state.students.find((item) => item.id === studentId) || state.students[0];
+  const wallet = student ? getRewardWallet(state, student.id) : { stars: 0, coins: 0, streakDays: 0, badges: [] };
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#F8FAFC]">
@@ -72,18 +77,18 @@ export function StudentShell({
           </div>
           <div className="min-w-0">
             <p className="text-xs font-black text-slate-500">真实姓名由老师管理</p>
-            <h1 className="truncate text-2xl font-black text-slate-950">{studentProfile.realName}</h1>
+            <h1 className="truncate text-2xl font-black text-slate-950">{student?.name || "学生"}</h1>
             <p className="mt-1 text-sm font-bold text-slate-500">
-              {studentProfile.grade} · {studentProfile.className} · {studentProfile.group}
+              {student?.grade || "未设置年级"} · {student?.className || "未设置班级"} · {student?.group || "未设置小组"}
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <StatusPill icon={<Flame size={22} />} label="连续学习" value={`${studentProfile.streakDays}天`} color="bg-red-100 text-brand-red" />
-          <StatusPill icon={<Star size={22} />} label="星星" value={state.progress.stars} color="bg-yellow-100 text-yellow-700" />
-          <StatusPill icon={<Coins size={22} />} label="金币" value={state.progress.coins} color="bg-orange-100 text-brand-orange" />
-          <StatusPill icon={<Sparkles size={22} />} label="徽章" value={studentProfile.badges.length} color="bg-purple-100 text-brand-purple" />
+          <StatusPill icon={<Flame size={22} />} label="连续学习" value={`${wallet.streakDays}天`} color="bg-red-100 text-brand-red" />
+          <StatusPill icon={<Star size={22} />} label="星星" value={wallet.stars} color="bg-yellow-100 text-yellow-700" />
+          <StatusPill icon={<Coins size={22} />} label="金币" value={wallet.coins} color="bg-orange-100 text-brand-orange" />
+          <StatusPill icon={<Sparkles size={22} />} label="徽章" value={wallet.badges.length} color="bg-purple-100 text-brand-purple" />
         </div>
       </section>
 
