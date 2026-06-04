@@ -30,6 +30,8 @@ export function ShopClient() {
   const wallet = getRewardWallet(state, studentId);
   const visibleItems = state.shopItems.filter((item) => item.active && (item.category === category || category === "全部"));
   const myOrders = state.redemptionOrders.filter((order) => order.studentId === studentId);
+  const myHistory = state.redemptionHistory.filter((order) => order.studentId === studentId);
+  const myCoinRecords = state.coinTransactions.filter((record) => record.studentId === studentId);
 
   function redeem(itemId: string) {
     const item = state.shopItems.find((shopItem) => shopItem.id === itemId);
@@ -162,7 +164,26 @@ export function ShopClient() {
                 {order.itemName}
                 <div className="mt-1 text-xs text-slate-500">{order.price}金币 · {order.status}</div>
               </div>
-            )) : <p className="text-sm font-bold leading-7 text-slate-600">暂无兑换订单。</p>}
+            )) : <p className="text-sm font-bold leading-7 text-slate-600">暂无待确认兑换订单。</p>}
+            {myHistory.slice(0, 4).map((order) => (
+              <div key={order.id} className="rounded-3xl bg-white p-3 text-sm font-black text-slate-700 shadow-sm">
+                {order.itemName}
+                <div className="mt-1 text-xs text-slate-500">{order.price}金币 · {order.result}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="game-card p-5">
+          <h2 className="text-xl font-black text-slate-950">金币记录</h2>
+          <div className="mt-4 grid gap-3">
+            {myCoinRecords.length ? myCoinRecords.slice(0, 8).map((record) => (
+              <div key={record.id} className="rounded-3xl bg-slate-50 p-3 text-xs font-bold leading-5 text-slate-600">
+                <span className="font-black text-slate-800">{record.type}</span> · {record.amount > 0 ? "+" : ""}{record.amount}金币
+                <br />{record.before} → {record.after} · {record.reason}
+                <br />{new Date(record.createdAt).toLocaleString("zh-CN")}
+              </div>
+            )) : <p className="text-sm font-bold text-slate-500">暂无金币记录。</p>}
           </div>
         </div>
       </aside>

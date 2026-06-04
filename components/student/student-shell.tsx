@@ -14,7 +14,7 @@ const navItems = [
   { href: "/student", label: "学习地图" },
   { href: "/student/practice", label: "今日练习" },
   { href: "/student/shop", label: "商城" },
-  { href: "/student/cards", label: "抽卡收藏" }
+  { href: "/student/cards", label: "我的" }
 ];
 
 export function StudentShell({
@@ -79,7 +79,7 @@ export function StudentShell({
             <p className="text-xs font-black text-slate-500">真实姓名由老师管理</p>
             <h1 className="truncate text-2xl font-black text-slate-950">{student?.name || "学生"}</h1>
             <p className="mt-1 text-sm font-bold text-slate-500">
-              {student?.grade || "未设置年级"} · {student?.className || "未设置班级"} · {student?.group || "未设置小组"}
+              {student?.grade || "未设置年级"} · {student?.system || "未设置体系"}
             </p>
           </div>
         </div>

@@ -31,7 +31,7 @@ export default function HomePage() {
             </div>
             <h2 className="text-2xl font-black text-slate-950">学生入口</h2>
             <p className="mt-3 min-h-16 text-sm font-semibold leading-7 text-slate-500">
-              进入任天堂风格的学习地图，挑战关卡、获得星星金币、兑换奖励与抽卡收藏。
+              进入任天堂风格的学习地图，挑战关卡、获得星星金币、兑换奖励、点亮徽章称号。
             </p>
             <Button asChild size="lg" className="mt-7 w-full">
               <Link href="/login/student">

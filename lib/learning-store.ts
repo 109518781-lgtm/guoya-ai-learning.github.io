@@ -1,8 +1,10 @@
 export type StageId = "vocab" | "phrase" | "sentence" | "grammar" | "reading" | "exam" | "wrong";
 export type QuestionMode = "choice" | "letters" | "blocks";
 export type TaskStatus = "draft" | "review" | "published";
-export type AssignmentType = "students" | "group" | "class";
-export type OrderStatus = "待确认" | "已确认" | "已拒绝" | "已完成";
+export type AssignmentType = "students" | "customGroup" | "system" | "all";
+export type OrderStatus = "待确认" | "已拒绝" | "余额不足";
+export type StudentSystem = "同步" | "强化" | "尖子";
+export type CoinChangeType = "学习奖励" | "商品兑换扣除" | "老师手动增加" | "老师手动扣减";
 
 export interface Student {
   id: string;
@@ -10,8 +12,7 @@ export interface Student {
   account: string;
   password: string;
   grade: string;
-  className: string;
-  group: string;
+  system: StudentSystem;
   avatarTheme?: string;
 }
 
@@ -51,6 +52,7 @@ export interface LearningTask {
   title: string;
   status: TaskStatus;
   createdAt: string;
+  reviewed?: boolean;
   rawText: {
     knowledge: string;
     questions: string;
@@ -75,9 +77,15 @@ export interface TaskAssignment {
   taskId: string;
   type: AssignmentType;
   studentIds: string[];
-  group?: string;
-  className?: string;
+  groupId?: string;
+  system?: StudentSystem;
   createdAt: string;
+}
+
+export interface StudentGroup {
+  id: string;
+  name: string;
+  studentIds: string[];
 }
 
 export interface StudentProgress {
@@ -109,12 +117,38 @@ export interface RedemptionOrder {
   createdAt: string;
 }
 
+export interface RedemptionHistory {
+  id: string;
+  studentId: string;
+  itemId: string;
+  itemName: string;
+  price: number;
+  result: "已确认" | "已拒绝";
+  createdAt: string;
+  handledAt: string;
+}
+
 export interface RewardWallet {
   studentId: string;
   stars: number;
   coins: number;
   streakDays: number;
   badges: string[];
+  title: string;
+  titles: string[];
+}
+
+export interface CoinTransaction {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentAccount: string;
+  type: CoinChangeType;
+  amount: number;
+  before: number;
+  after: number;
+  reason: string;
+  createdAt: string;
 }
 
 export interface PlatformState {
@@ -122,10 +156,13 @@ export interface PlatformState {
   teachers: Teacher[];
   tasks: LearningTask[];
   taskAssignments: TaskAssignment[];
+  studentGroups: StudentGroup[];
   studentProgress: StudentProgress[];
   shopItems: ShopItem[];
   redemptionOrders: RedemptionOrder[];
+  redemptionHistory: RedemptionHistory[];
   rewards: RewardWallet[];
+  coinTransactions: CoinTransaction[];
 }
 
 export const platformStorageKey = "guoya_learning_platform_v1";
@@ -145,7 +182,20 @@ export const stages: Array<{
   { id: "wrong", name: "错题Boss塔", scene: "Boss塔", short: "错题" }
 ];
 
-export const shopCategories = ["零食", "文具", "头像框", "皮肤", "抽卡", "特殊奖励"];
+export const shopCategories = ["零食", "文具", "头像框", "皮肤", "特殊奖励"];
+export const studentSystems: StudentSystem[] = ["同步", "强化", "尖子"];
+export const badgeDefinitions = [
+  "单词小勇士",
+  "短语猎人",
+  "句型工匠",
+  "语法守护者",
+  "阅读探险家",
+  "错题修复师",
+  "今日满分王",
+  "连续学习达人",
+  "英语冒险家"
+];
+export const titleDefinitions = ["三连胜", "五连胜", "十连胜", "英语冒险家"];
 
 export function getInitialPlatformState(): PlatformState {
   return {
@@ -156,8 +206,7 @@ export function getInitialPlatformState(): PlatformState {
         account: "student",
         password: "123456",
         grade: "七年级",
-        className: "英语A班",
-        group: "晨星组",
+        system: "同步",
         avatarTheme: "勇者"
       }
     ],
@@ -171,18 +220,23 @@ export function getInitialPlatformState(): PlatformState {
     ],
     tasks: [],
     taskAssignments: [],
+    studentGroups: [],
     studentProgress: [],
     shopItems: [],
     redemptionOrders: [],
+    redemptionHistory: [],
     rewards: [
       {
         studentId: "student-demo",
         stars: 0,
         coins: 300,
         streakDays: 7,
-        badges: ["单词新芽"]
+        badges: ["连续学习达人"],
+        title: "英语冒险家",
+        titles: ["英语冒险家"]
       }
-    ]
+    ],
+    coinTransactions: []
   };
 }
 
@@ -218,15 +272,43 @@ export function getRewardWallet(state: PlatformState, studentId: string) {
     stars: 0,
     coins: 0,
     streakDays: 0,
-    badges: []
+    badges: [],
+    title: "英语冒险家",
+    titles: ["英语冒险家"]
   };
 }
 
 export function ensureRewardWallet(state: PlatformState, studentId: string) {
   const existing = state.rewards.find((reward) => reward.studentId === studentId);
   if (existing) return existing;
-  const wallet: RewardWallet = { studentId, stars: 0, coins: 0, streakDays: 0, badges: [] };
+  const wallet: RewardWallet = { studentId, stars: 0, coins: 0, streakDays: 0, badges: [], title: "英语冒险家", titles: ["英语冒险家"] };
   state.rewards.push(wallet);
+  return wallet;
+}
+
+export function recordCoinChange(
+  state: PlatformState,
+  studentId: string,
+  type: CoinChangeType,
+  amount: number,
+  reason: string
+) {
+  const student = state.students.find((item) => item.id === studentId);
+  const wallet = ensureRewardWallet(state, studentId);
+  const before = wallet.coins;
+  wallet.coins = Math.max(0, wallet.coins + amount);
+  state.coinTransactions.unshift({
+    id: createId("coin"),
+    studentId,
+    studentName: student?.name || "未知学生",
+    studentAccount: student?.account || "",
+    type,
+    amount,
+    before,
+    after: wallet.coins,
+    reason,
+    createdAt: new Date().toISOString()
+  });
   return wallet;
 }
 
@@ -236,9 +318,13 @@ export function getAssignedTasks(state: PlatformState, studentId?: string) {
   if (!student) return [];
   const taskIds = state.taskAssignments
     .filter((assignment) => {
+      if (assignment.type === "all") return true;
       if (assignment.type === "students") return assignment.studentIds.includes(studentId);
-      if (assignment.type === "group") return assignment.group === student.group;
-      if (assignment.type === "class") return assignment.className === student.className;
+      if (assignment.type === "customGroup") {
+        const group = state.studentGroups.find((item) => item.id === assignment.groupId);
+        return Boolean(group?.studentIds.includes(studentId));
+      }
+      if (assignment.type === "system") return assignment.system === student.system;
       return false;
     })
     .map((assignment) => assignment.taskId);
@@ -314,7 +400,7 @@ export function advanceAfterCorrect(state: PlatformState, question: LearningQues
     progress.completedQuestionIds.push(question.id);
   }
   wallet.stars += 3;
-  wallet.coins += 60;
+  recordCoinChange(next, studentId, "学习奖励", 60, `完成${question.title}`);
 
   const task = next.tasks.find((item) => item.id === taskId);
   if (task && progress.currentStage !== "wrong") {
@@ -323,9 +409,20 @@ export function advanceAfterCorrect(state: PlatformState, question: LearningQues
     if (currentComplete) {
       const index = stages.findIndex((item) => item.id === progress.currentStage);
       const nextStage = stages[index + 1]?.id;
+      const badge = stageBadgeMap[progress.currentStage];
+      if (badge && !wallet.badges.includes(badge)) wallet.badges.push(badge);
       if (nextStage) progress.currentStage = nextStage;
     }
+    if (task.questions.every((item) => progress.completedQuestionIds.includes(item.id)) && !wallet.badges.includes("英语冒险家")) {
+      wallet.badges.push("英语冒险家");
+      if (!wallet.titles.includes("英语冒险家")) wallet.titles.push("英语冒险家");
+      wallet.title = "英语冒险家";
+    }
   }
+  const completedCount = progress.completedQuestionIds.length;
+  if (completedCount >= 3 && !wallet.titles.includes("三连胜")) wallet.titles.push("三连胜");
+  if (completedCount >= 5 && !wallet.titles.includes("五连胜")) wallet.titles.push("五连胜");
+  if (completedCount >= 10 && !wallet.titles.includes("十连胜")) wallet.titles.push("十连胜");
   return next;
 }
 
@@ -354,6 +451,7 @@ export function createTaskFromText(input: {
     status: "review",
     createdAt: new Date().toISOString(),
     rawText: { knowledge, questions },
+    reviewed: false,
     files: {
       knowledge: input.knowledgeFile,
       questions: input.questionFile
@@ -372,7 +470,8 @@ function parseLearningContent(text: string, questionText: string) {
 
   const phraseMatches = Array.from(new Set([
     ...(clean.match(/\b(?:be|look|listen|take|make|have|get|give|put|come|go|turn|pay|keep|do|play|read|write|talk|wait|ask|think|work|learn)\s+[a-z]+(?:\s+[a-z]+)?\b/gi) || []),
-    ...(clean.match(/\b[a-z]+(?:ing|ed)?\s+(?:at|in|on|for|with|from|to|about|of)\s+[a-z]+\b/gi) || [])
+    ...(clean.match(/\b[a-z]+(?:ing|ed)?\s+(?:at|in|on|for|with|from|to|about|of)\s+[a-z]+\b/gi) || []),
+    ...findRepeatedPhrases(clean)
   ].map((item) => item.trim()))).slice(0, 12);
 
   const sentences = Array.from(new Set((clean.match(/[A-Z][^.!?\n]{12,}[.!?]/g) || [])
@@ -472,7 +571,7 @@ function parseChoiceQuestions(text: string) {
     .map((block) => block.trim())
     .filter(Boolean);
   const parsed = blocks.map((block) => {
-    const options = Array.from(block.matchAll(/(?:^|\n)\s*([A-D])[\).、]\s*([^\n]+)/g)).map((match) => match[2].trim());
+    const options = Array.from(block.matchAll(/(?:^|\n|\s)([A-D])[\).、]\s*([^\nA-D]+)/g)).map((match) => match[2].trim());
     const answerMatch = block.match(/(?:答案|Answer)\s*[:：]?\s*([A-D]|[^\n]+)/i);
     const firstLine = block.split("\n").find((line) => line.trim() && !/^[A-D][\).、]/.test(line.trim())) || block;
     const answer = answerMatch
@@ -488,6 +587,16 @@ function parseChoiceQuestions(text: string) {
     };
   });
   return parsed.filter((item) => item.prompt.includes("?") || item.options.length > 1).slice(0, 16);
+}
+
+function findRepeatedPhrases(text: string) {
+  const phrases = (text.toLowerCase().match(/\b[a-z]{3,}\s+[a-z]{3,}(?:\s+[a-z]{3,})?\b/g) || [])
+    .filter((phrase) => !phrase.split(/\s+/).every((word) => stopWords.has(word)));
+  const counts = phrases.reduce<Record<string, number>>((acc, phrase) => {
+    acc[phrase] = (acc[phrase] || 0) + 1;
+    return acc;
+  }, {});
+  return Object.entries(counts).filter(([, count]) => count > 1).map(([phrase]) => phrase);
 }
 
 function detectGrammar(text: string) {
@@ -528,6 +637,15 @@ function shuffle<T>(items: T[]) {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
+const stageBadgeMap: Partial<Record<StageId, string>> = {
+  vocab: "单词小勇士",
+  phrase: "短语猎人",
+  sentence: "句型工匠",
+  grammar: "语法守护者",
+  reading: "阅读探险家",
+  wrong: "错题修复师"
+};
+
 function normalizePlatformState(raw: Partial<PlatformState> & Record<string, unknown>): PlatformState {
   const initial = getInitialPlatformState();
   const state: PlatformState = {
@@ -535,11 +653,33 @@ function normalizePlatformState(raw: Partial<PlatformState> & Record<string, unk
     teachers: Array.isArray(raw.teachers) ? raw.teachers as Teacher[] : initial.teachers,
     tasks: Array.isArray(raw.tasks) ? raw.tasks as LearningTask[] : [],
     taskAssignments: Array.isArray(raw.taskAssignments) ? raw.taskAssignments as TaskAssignment[] : [],
+    studentGroups: Array.isArray(raw.studentGroups) ? raw.studentGroups as StudentGroup[] : [],
     studentProgress: Array.isArray(raw.studentProgress) ? raw.studentProgress as StudentProgress[] : [],
     shopItems: Array.isArray(raw.shopItems) ? raw.shopItems as ShopItem[] : [],
     redemptionOrders: Array.isArray(raw.redemptionOrders) ? raw.redemptionOrders as RedemptionOrder[] : [],
-    rewards: Array.isArray(raw.rewards) ? raw.rewards as RewardWallet[] : initial.rewards
+    redemptionHistory: Array.isArray(raw.redemptionHistory) ? raw.redemptionHistory as RedemptionHistory[] : [],
+    rewards: Array.isArray(raw.rewards) ? raw.rewards as RewardWallet[] : initial.rewards,
+    coinTransactions: Array.isArray(raw.coinTransactions) ? raw.coinTransactions as CoinTransaction[] : []
   };
+  state.students = state.students.map((student) => ({
+    ...student,
+    system: (student.system || (student as unknown as { className?: string }).className || "同步") as StudentSystem
+  }));
+  state.taskAssignments = state.taskAssignments.map((assignment) => {
+    if ((assignment as unknown as { type?: string }).type === "class") {
+      return { ...assignment, type: "system", system: ((assignment as unknown as { className?: string }).className || "同步") as StudentSystem };
+    }
+    if ((assignment as unknown as { type?: string }).type === "group") {
+      return { ...assignment, type: "students", studentIds: assignment.studentIds || [] };
+    }
+    return assignment;
+  });
+  state.rewards = state.rewards.map((reward) => ({
+    ...reward,
+    title: reward.title || "英语冒险家",
+    titles: reward.titles?.length ? reward.titles : ["英语冒险家"],
+    badges: reward.badges || []
+  }));
   state.students.forEach((student) => ensureRewardWallet(state, student.id));
   return state;
 }
