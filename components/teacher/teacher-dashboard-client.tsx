@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -87,6 +87,7 @@ export function TeacherDashboardClient() {
   const [knowledgeText, setKnowledgeText] = useState("");
   const [questionText, setQuestionText] = useState("");
   const [draftTask, setDraftTask] = useState<LearningTask | null>(null);
+  const [deepSeekResult, setDeepSeekResult] = useState<DeepSeekParseResult | null>(null);
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [assignMode, setAssignMode] = useState<"students" | "customGroup" | "system" | "all">("students");
   const [assignGroupId, setAssignGroupId] = useState("");
@@ -102,6 +103,7 @@ export function TeacherDashboardClient() {
   const [coinReason, setCoinReason] = useState("");
   const [status, setStatus] = useState("");
   const [isParsing, setIsParsing] = useState(false);
+  const reviewSectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setState(loadPlatformState());
@@ -147,8 +149,9 @@ export function TeacherDashboardClient() {
       return;
     }
     setIsParsing(true);
-    setStatus("正在调用 DeepSeek API 解析资料，请稍候。");
+    setStatus("正在调用DeepSeek解析...");
     try {
+      console.log("AI parse request sent");
       const response = await fetch("/api/ai/parse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -159,6 +162,7 @@ export function TeacherDashboardClient() {
         })
       });
       const payload = await response.json() as { result?: DeepSeekParseResult; error?: string; rawContent?: string; provider?: string };
+      console.log("AI parse response received", payload);
       if (!response.ok || !payload.result) {
         const raw = payload.rawContent ? `\n原始返回：${payload.rawContent}` : "";
         throw new Error(`${payload.error || "DeepSeek 解析失败，未返回结构化结果"}${raw}`);
@@ -171,7 +175,18 @@ export function TeacherDashboardClient() {
         questionFile: questionFile?.name
       });
       setDraftTask(task);
-      commit({ ...state, tasks: [task, ...state.tasks.filter((item) => item.id !== task.id)] }, "DeepSeek解析成功，结构化结果已进入老师审核区。");
+      const vocabularyCount = payload.result.vocabularyItems?.length || 0;
+      const phraseCount = payload.result.phraseItems?.length || 0;
+      const grammarCount = payload.result.grammarItems?.length || 0;
+      const readingQuestionCount = payload.result.readingItems?.reduce((sum, item) => sum + (item.questions?.length || 0), 0) || 0;
+      setDeepSeekResult(payload.result);
+      commit(
+        { ...state, tasks: [task, ...state.tasks.filter((item) => item.id !== task.id)] },
+        `DeepSeek解析成功。\n解析完成，共生成：\n${vocabularyCount}个单词\n${phraseCount}个短语\n${grammarCount}个语法点\n${readingQuestionCount}道阅读题`
+      );
+      window.setTimeout(() => {
+        reviewSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 80);
     } catch (error) {
       const message = error instanceof Error ? error.message : "AI解析失败";
       setStatus(`AI解析失败：${message}`);
@@ -432,14 +447,16 @@ export function TeacherDashboardClient() {
             </div>
           </header>
 
-          {status ? <div className="mb-5 rounded-3xl bg-yellow-100 p-4 text-sm font-black text-yellow-800">{status}</div> : null}
+          {status ? <div className="mb-5 whitespace-pre-line rounded-3xl bg-yellow-100 p-4 text-sm font-black text-yellow-800">{status}</div> : null}
 
           <div className="grid gap-5 xl:grid-cols-[1.35fr_.85fr]">
             <div className="grid gap-5">
               <Metrics state={state} />
               <StudentPanel students={state.students} form={studentForm} setForm={setStudentForm} saveStudent={saveStudent} deleteStudent={deleteStudent} />
               <UploadCreator knowledgeFile={knowledgeFile} questionFile={questionFile} knowledgeText={knowledgeText} questionText={questionText} setKnowledgeText={setKnowledgeText} setQuestionText={setQuestionText} handleFile={handleFile} runAiParse={runAiParse} isParsing={isParsing} />
-              <ReviewPanel draftTask={draftTask} setDraftTask={setDraftTask} updateDraftQuestion={updateDraftQuestion} deleteQuestion={deleteQuestion} addQuestion={addQuestion} saveDraftTask={saveDraftTask} />
+              <div ref={reviewSectionRef}>
+                <ReviewPanel draftTask={draftTask} deepSeekResult={deepSeekResult} setDraftTask={setDraftTask} updateDraftQuestion={updateDraftQuestion} deleteQuestion={deleteQuestion} addQuestion={addQuestion} saveDraftTask={saveDraftTask} />
+              </div>
               <ShopManager items={state.shopItems} form={itemForm} setForm={setItemForm} saveItem={saveItem} deleteItem={deleteItem} handleImage={handleItemImage} />
             </div>
             <aside className="grid content-start gap-5">
@@ -524,7 +541,7 @@ function UploadCreator({ knowledgeFile, questionFile, knowledgeText, questionTex
   );
 }
 
-function ReviewPanel({ draftTask, setDraftTask, updateDraftQuestion, deleteQuestion, addQuestion, saveDraftTask }: { draftTask: LearningTask | null; setDraftTask: (task: LearningTask) => void; updateDraftQuestion: (questionId: string, patch: Partial<LearningQuestion>) => void; deleteQuestion: (questionId: string) => void; addQuestion: () => void; saveDraftTask: () => void }) {
+function ReviewPanel({ draftTask, deepSeekResult, setDraftTask, updateDraftQuestion, deleteQuestion, addQuestion, saveDraftTask }: { draftTask: LearningTask | null; deepSeekResult: DeepSeekParseResult | null; setDraftTask: (task: LearningTask) => void; updateDraftQuestion: (questionId: string, patch: Partial<LearningQuestion>) => void; deleteQuestion: (questionId: string) => void; addQuestion: () => void; saveDraftTask: () => void }) {
   return (
     <Card id="teacher-3" className="hover:translate-y-0">
       <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -538,6 +555,12 @@ function ReviewPanel({ draftTask, setDraftTask, updateDraftQuestion, deleteQuest
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {Object.entries(draftTask.extracted).map(([key, items]) => <div key={key} className="rounded-[24px] border border-slate-200 bg-white p-4"><div className="text-sm font-black text-slate-500">{extractLabel(key)}</div><div className="mt-2 text-2xl font-black text-slate-950">{items.length}</div><p className="mt-2 line-clamp-2 text-xs font-bold text-slate-500">{items.join(" / ") || "暂无识别内容"}</p></div>)}
             </div>
+            {deepSeekResult ? (
+              <div className="rounded-[24px] bg-slate-950 p-4 text-white">
+                <div className="text-sm font-black text-lime-300">DeepSeek真实返回JSON</div>
+                <pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap text-xs leading-6">{JSON.stringify(deepSeekResult, null, 2)}</pre>
+              </div>
+            ) : null}
             <div className="grid gap-3">
               {draftTask.questions.map((question) => (
                 <div key={question.id} className="grid gap-3 rounded-[24px] border border-slate-200 bg-slate-50 p-4">
