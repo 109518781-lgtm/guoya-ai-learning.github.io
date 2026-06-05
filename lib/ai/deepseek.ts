@@ -80,12 +80,22 @@ interface DeepSeekChatResponse {
   };
 }
 
+export class DeepSeekJsonParseError extends Error {
+  rawContent: string;
+
+  constructor(message: string, rawContent: string) {
+    super(message);
+    this.name = "DeepSeekJsonParseError";
+    this.rawContent = rawContent;
+  }
+}
+
 export async function parseLearningMaterialWithDeepSeek(
   request: DeepSeekParseRequest
 ): Promise<DeepSeekParseResult> {
   const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) {
-    throw new Error("未配置 DEEPSEEK_API_KEY，请在 .env.local 中添加 DeepSeek API Key");
+    throw new Error("未配置 DEEPSEEK_API_KEY，请在 .env.local 中添加");
   }
 
   const response = await fetch("https://api.deepseek.com/chat/completions", {
@@ -119,6 +129,7 @@ export async function parseLearningMaterialWithDeepSeek(
       ]
     })
   });
+  console.log(`DeepSeek response status: ${response.status}`);
 
   const body = await response.json().catch(() => null) as DeepSeekChatResponse | null;
   if (!response.ok) {
@@ -238,6 +249,6 @@ function parseStrictJson(content: string): DeepSeekParseResult {
     return parsed;
   } catch (error) {
     const reason = error instanceof Error ? error.message : "未知错误";
-    throw new Error(`DeepSeek 返回内容不是有效 JSON：${reason}`);
+    throw new DeepSeekJsonParseError(`DeepSeek返回内容不是有效JSON：${reason}`, content);
   }
 }

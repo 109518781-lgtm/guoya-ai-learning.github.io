@@ -101,6 +101,7 @@ export function TeacherDashboardClient() {
   const [coinAmount, setCoinAmount] = useState(100);
   const [coinReason, setCoinReason] = useState("");
   const [status, setStatus] = useState("");
+  const [isParsing, setIsParsing] = useState(false);
 
   useEffect(() => {
     setState(loadPlatformState());
@@ -141,10 +142,11 @@ export function TeacherDashboardClient() {
   }
 
   async function runAiParse() {
-    if (!knowledgeText.trim() && !questionText.trim()) {
-      setStatus("请先上传 TXT/MD，或手动粘贴内容后再解析。");
+    if (!knowledgeText.trim()) {
+      setStatus("请先粘贴学习资料内容。");
       return;
     }
+    setIsParsing(true);
     setStatus("正在调用 DeepSeek API 解析资料，请稍候。");
     try {
       const response = await fetch("/api/ai/parse", {
@@ -156,9 +158,10 @@ export function TeacherDashboardClient() {
           mode: "generate_from_material"
         })
       });
-      const payload = await response.json() as { result?: DeepSeekParseResult; error?: string; provider?: string };
+      const payload = await response.json() as { result?: DeepSeekParseResult; error?: string; rawContent?: string; provider?: string };
       if (!response.ok || !payload.result) {
-        throw new Error(payload.error || "DeepSeek 解析失败，未返回结构化结果");
+        const raw = payload.rawContent ? `\n原始返回：${payload.rawContent}` : "";
+        throw new Error(`${payload.error || "DeepSeek 解析失败，未返回结构化结果"}${raw}`);
       }
       const task = createTaskFromDeepSeekResult({
         result: payload.result,
@@ -168,10 +171,12 @@ export function TeacherDashboardClient() {
         questionFile: questionFile?.name
       });
       setDraftTask(task);
-      commit({ ...state, tasks: [task, ...state.tasks.filter((item) => item.id !== task.id)] }, "DeepSeek 解析成功，结构化结果已进入老师审核区。");
+      commit({ ...state, tasks: [task, ...state.tasks.filter((item) => item.id !== task.id)] }, "DeepSeek解析成功，结构化结果已进入老师审核区。");
     } catch (error) {
       const message = error instanceof Error ? error.message : "AI解析失败";
       setStatus(`AI解析失败：${message}`);
+    } finally {
+      setIsParsing(false);
     }
   }
 
@@ -433,7 +438,7 @@ export function TeacherDashboardClient() {
             <div className="grid gap-5">
               <Metrics state={state} />
               <StudentPanel students={state.students} form={studentForm} setForm={setStudentForm} saveStudent={saveStudent} deleteStudent={deleteStudent} />
-              <UploadCreator knowledgeFile={knowledgeFile} questionFile={questionFile} knowledgeText={knowledgeText} questionText={questionText} setKnowledgeText={setKnowledgeText} setQuestionText={setQuestionText} handleFile={handleFile} runAiParse={runAiParse} />
+              <UploadCreator knowledgeFile={knowledgeFile} questionFile={questionFile} knowledgeText={knowledgeText} questionText={questionText} setKnowledgeText={setKnowledgeText} setQuestionText={setQuestionText} handleFile={handleFile} runAiParse={runAiParse} isParsing={isParsing} />
               <ReviewPanel draftTask={draftTask} setDraftTask={setDraftTask} updateDraftQuestion={updateDraftQuestion} deleteQuestion={deleteQuestion} addQuestion={addQuestion} saveDraftTask={saveDraftTask} />
               <ShopManager items={state.shopItems} form={itemForm} setForm={setItemForm} saveItem={saveItem} deleteItem={deleteItem} handleImage={handleItemImage} />
             </div>
@@ -500,7 +505,7 @@ function StudentPanel({ students, form, setForm, saveStudent, deleteStudent }: {
   );
 }
 
-function UploadCreator({ knowledgeFile, questionFile, knowledgeText, questionText, setKnowledgeText, setQuestionText, handleFile, runAiParse }: { knowledgeFile: File | null; questionFile: File | null; knowledgeText: string; questionText: string; setKnowledgeText: (value: string) => void; setQuestionText: (value: string) => void; handleFile: (type: "knowledge" | "questions", event: ChangeEvent<HTMLInputElement>) => void; runAiParse: () => void }) {
+function UploadCreator({ knowledgeFile, questionFile, knowledgeText, questionText, setKnowledgeText, setQuestionText, handleFile, runAiParse, isParsing }: { knowledgeFile: File | null; questionFile: File | null; knowledgeText: string; questionText: string; setKnowledgeText: (value: string) => void; setQuestionText: (value: string) => void; handleFile: (type: "knowledge" | "questions", event: ChangeEvent<HTMLInputElement>) => void; runAiParse: () => void; isParsing: boolean }) {
   return (
     <Card id="teacher-2" className="hover:translate-y-0">
       <CardHeader><CardTitle className="flex items-center gap-2"><UploadCloud className="text-brand-green" /> 资料上传 / 任务创建</CardTitle></CardHeader>
@@ -509,7 +514,11 @@ function UploadCreator({ knowledgeFile, questionFile, knowledgeText, questionTex
         <UploadBox title="题目文件" detail="支持识别 A/B/C/D 选择题" file={questionFile} onChange={(event) => handleFile("questions", event)} />
         <TextArea title="手动粘贴知识点内容" value={knowledgeText} onChange={setKnowledgeText} />
         <TextArea title="手动粘贴题目内容" value={questionText} onChange={setQuestionText} />
-        <div className="xl:col-span-2"><Button onClick={runAiParse} size="lg" variant="yellow" className="w-full"><WandSparkles size={20} /> AI解析</Button></div>
+        <div className="xl:col-span-2">
+          <Button onClick={runAiParse} disabled={isParsing} size="lg" variant="yellow" className="w-full">
+            <WandSparkles size={20} /> {isParsing ? "解析中..." : "AI解析"}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
