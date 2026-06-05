@@ -27,7 +27,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
   createId,
-  createTaskFromText,
+  createTaskFromDeepSeekResult,
   ensureRewardWallet,
   getInitialPlatformState,
   getRewardWallet,
@@ -47,6 +47,7 @@ import {
   studentSystems,
   TaskAssignment
 } from "@/lib/learning-store";
+import type { DeepSeekParseResult } from "@/lib/ai/deepseek";
 import { cn } from "@/lib/utils";
 
 const menu = [
@@ -139,19 +140,39 @@ export function TeacherDashboardClient() {
     setStatus("PDF/DOCX 暂未接入真实解析，请将内容粘贴到文本框后解析。");
   }
 
-  function runAiParse() {
+  async function runAiParse() {
     if (!knowledgeText.trim() && !questionText.trim()) {
       setStatus("请先上传 TXT/MD，或手动粘贴内容后再解析。");
       return;
     }
-    const task = createTaskFromText({
-      knowledgeText,
-      questionText,
-      knowledgeFile: knowledgeFile?.name,
-      questionFile: questionFile?.name
-    });
-    setDraftTask(task);
-    commit({ ...state, tasks: [task, ...state.tasks.filter((item) => item.id !== task.id)] }, "本地规则解析完成，结果已进入老师审核区。");
+    setStatus("正在调用 DeepSeek API 解析资料，请稍候。");
+    try {
+      const response = await fetch("/api/ai/parse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          knowledgeText,
+          questionText,
+          mode: "generate_from_material"
+        })
+      });
+      const payload = await response.json() as { result?: DeepSeekParseResult; error?: string; provider?: string };
+      if (!response.ok || !payload.result) {
+        throw new Error(payload.error || "DeepSeek 解析失败，未返回结构化结果");
+      }
+      const task = createTaskFromDeepSeekResult({
+        result: payload.result,
+        knowledgeText,
+        questionText,
+        knowledgeFile: knowledgeFile?.name,
+        questionFile: questionFile?.name
+      });
+      setDraftTask(task);
+      commit({ ...state, tasks: [task, ...state.tasks.filter((item) => item.id !== task.id)] }, "DeepSeek 解析成功，结构化结果已进入老师审核区。");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "AI解析失败";
+      setStatus(`AI解析失败：${message}`);
+    }
   }
 
   function saveDraftTask(task = draftTask) {

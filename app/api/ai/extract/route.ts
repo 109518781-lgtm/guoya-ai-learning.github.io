@@ -1,16 +1,7 @@
 import { NextResponse } from "next/server";
-import { aiProvider } from "@/lib/ai/provider";
 
 export async function POST() {
-  const result = await aiProvider.extractLearningTask({
-    knowledgeFileIds: ["mock-knowledge-file"],
-    questionFileIds: ["mock-question-file"],
-    subject: "english"
-  });
-
   return NextResponse.json({
-    provider: aiProvider.name,
-    mode: "mock",
-    result
-  });
+    error: "该接口已停用，请使用 /api/ai/parse 调用 DeepSeek 真实解析。"
+  }, { status: 410 });
 }

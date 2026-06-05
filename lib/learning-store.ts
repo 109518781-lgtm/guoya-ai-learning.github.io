@@ -1,3 +1,5 @@
+import type { DeepSeekGeneratedExercise, DeepSeekParseResult } from "@/lib/ai/deepseek";
+
 export type StageId = "vocab" | "phrase" | "sentence" | "grammar" | "reading" | "exam" | "wrong";
 export type QuestionMode = "choice" | "letters" | "blocks";
 export type TaskStatus = "draft" | "review" | "published";
@@ -461,6 +463,80 @@ export function createTaskFromText(input: {
   };
 }
 
+export function createTaskFromDeepSeekResult(input: {
+  result: DeepSeekParseResult;
+  knowledgeText: string;
+  questionText?: string;
+  knowledgeFile?: string;
+  questionFile?: string;
+}): LearningTask {
+  const taskId = createId("task");
+  const result = input.result;
+  const questions: LearningQuestion[] = [];
+
+  result.vocabularyItems?.forEach((item, index) => {
+    if (!item.word) return;
+    questions.push(q(`${taskId}-ai-vocab-choice-${index}`, "vocab", "英译中选择", item.question || item.word, "选择正确中文意思", "choice", item.answer || item.meaning, ensureOptions(item.options, item.answer || item.meaning), false, item.explanation || `${item.word} 的意思是 ${item.meaning || item.answer}`));
+    questions.push(q(`${taskId}-ai-vocab-letter-${index}`, "vocab", "中译英拼词", item.meaning || "根据中文拼出英文", "点击字母块拼出英文单词", "letters", item.word, undefined, false, item.explanation || `拼写 ${item.word}`));
+  });
+
+  result.phraseItems?.forEach((item, index) => {
+    if (!item.phrase) return;
+    questions.push(q(`${taskId}-ai-phrase-choice-${index}`, "phrase", "短语理解", item.question || item.phrase, "选择正确中文意思", "choice", item.answer || item.meaning, ensureOptions(item.options, item.answer || item.meaning), false, item.explanation || `${item.phrase} 的意思是 ${item.meaning || item.answer}`));
+    questions.push(q(`${taskId}-ai-phrase-blocks-${index}`, "phrase", "短语拼装", item.meaning || "点击词块组成短语", "点击词块组成正确短语", "blocks", item.phrase, undefined, false, item.explanation || `按固定搭配记住 ${item.phrase}`));
+  });
+
+  result.sentenceItems?.forEach((item, index) => {
+    if (!item.sentence) return;
+    questions.push(q(`${taskId}-ai-sentence-${index}`, "sentence", "句型排序", item.question || item.translation || "点击词块还原句子", "点击词块组成正确英文句子", "blocks", item.answer || item.sentence, undefined, false, item.explanation || "先找主语，再找谓语结构，最后补充其他成分。"));
+    const latest = questions[questions.length - 1];
+    latest.blocks = item.wordBlocks?.length ? shuffle(item.wordBlocks) : latest.blocks;
+  });
+
+  result.grammarItems?.forEach((item, index) => {
+    if (!item.question && !item.grammarPoint) return;
+    questions.push(q(`${taskId}-ai-grammar-${index}`, "grammar", "语法选择", item.question || item.grammarPoint, "选择正确答案", "choice", item.answer, ensureOptions(item.options, item.answer), !item.answer, item.explanation || item.grammarPoint));
+  });
+
+  result.readingItems?.forEach((item, readingIndex) => {
+    item.questions?.forEach((readingQuestion, questionIndex) => {
+      questions.push(q(`${taskId}-ai-reading-${readingIndex}-${questionIndex}`, "reading", "阅读理解", item.passage, readingQuestion.question, "choice", readingQuestion.answer, ensureOptions(readingQuestion.options, readingQuestion.answer), !readingQuestion.answer, readingQuestion.explanation || "先定位题干关键词，再回到原文查找依据。"));
+    });
+  });
+
+  result.generatedExercises?.forEach((exercise, index) => {
+    const stage = normalizeAiStage(exercise.stage);
+    if (!stage || !exercise.question) return;
+    const mode: QuestionMode = exercise.options?.length ? "choice" : stage === "sentence" ? "blocks" : "choice";
+    questions.push(q(`${taskId}-ai-exercise-${index}`, stage, exercise.type || "AI生成练习", exercise.question, "选择或拼装正确答案", mode, exercise.answer, mode === "choice" ? ensureOptions(exercise.options, exercise.answer) : undefined, !exercise.answer, exercise.explanation || "根据资料中的关键词和结构作答。"));
+  });
+
+  return {
+    id: taskId,
+    title: result.courseTitle || `AI英语闯关任务 ${new Date().toLocaleDateString("zh-CN")}`,
+    status: "review",
+    createdAt: new Date().toISOString(),
+    reviewed: false,
+    rawText: {
+      knowledge: input.knowledgeText,
+      questions: input.questionText || ""
+    },
+    files: {
+      knowledge: input.knowledgeFile,
+      questions: input.questionFile
+    },
+    extracted: {
+      vocabulary: result.vocabularyItems?.map((item) => `${item.word} / ${item.meaning}`).filter(Boolean) || [],
+      phrases: result.phraseItems?.map((item) => `${item.phrase} / ${item.meaning}`).filter(Boolean) || [],
+      sentences: result.sentenceItems?.map((item) => item.sentence).filter(Boolean) || [],
+      grammar: result.grammarItems?.map((item) => item.grammarPoint).filter(Boolean) || [],
+      readings: result.readingItems?.map((item) => item.passage).filter(Boolean) || [],
+      examQuestions: result.generatedExercises?.map((item) => item.question).filter(Boolean) || []
+    },
+    questions
+  };
+}
+
 function parseLearningContent(text: string, questionText: string) {
   const clean = text.replace(/\r/g, "\n");
   const englishWords = Array.from(new Set((clean.match(/\b[A-Za-z]{3,}\b/g) || [])
@@ -529,7 +605,8 @@ function q(
   mode: QuestionMode,
   answer: string,
   options?: string[],
-  needsAnswer = false
+  needsAnswer = false,
+  knowledge = title
 ): LearningQuestion {
   const answerBlocks = mode === "letters" ? answer.split("") : answer.replace(/[.?!。！？]/g, "").split(/\s+/).filter(Boolean);
   const finalOptions = mode === "choice" ? uniqueOptions([answer, ...(options || [])]).slice(0, 4) : undefined;
@@ -560,9 +637,25 @@ function q(
       breakthrough: "先抓题干关键词，再匹配词义、结构或原文信息。",
       method: "遇到同类题，先判断考查类型，再用排除法或词块顺序完成。",
       warning: needsAnswer ? "本题答案需要老师审核补充，发布前请确认。" : "不要只看单个单词，要结合题目要求。",
-      knowledge: title
+      knowledge
     }
   };
+}
+
+function ensureOptions(options: string[] | undefined, answer: string) {
+  const safe = uniqueOptions([answer, ...(options || [])]).filter(Boolean);
+  return [...safe, "选项A", "选项B", "选项C", "选项D"].slice(0, 4);
+}
+
+function normalizeAiStage(stage: DeepSeekGeneratedExercise["stage"]): StageId | null {
+  const value = String(stage || "").toLowerCase();
+  if (["vocab", "vocabulary", "word", "words", "单词"].includes(value)) return "vocab";
+  if (["phrase", "phrases", "短语"].includes(value)) return "phrase";
+  if (["sentence", "sentences", "句型", "句子"].includes(value)) return "sentence";
+  if (["grammar", "语法"].includes(value)) return "grammar";
+  if (["reading", "阅读"].includes(value)) return "reading";
+  if (["exam", "question", "questions", "原题", "题目"].includes(value)) return "exam";
+  return null;
 }
 
 function parseChoiceQuestions(text: string) {
